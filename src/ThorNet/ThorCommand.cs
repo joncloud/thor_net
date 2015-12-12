@@ -29,24 +29,34 @@ namespace ThorNet {
         public string Name { get { return _method.Name; } }
         public IEnumerable<MethodOptionAttribute> Options { get { return _options; } }
         
-        private object[] BindArguments(string[] textArgs) {
+        private object[] BindArguments(List<string> textArgs) {
             ParameterInfo[] parameters = _method.GetParameters();
-            Dictionary<string, int> aliases = GetAliases(parameters);
             
             object[] args = new object[parameters.Length];
             
-            for (int i = 0; i < textArgs.Length; i++) {
-                int target = i;
+            // Map the options.
+            Dictionary<string, MethodOption> options = GetOptions();
+            int i = textArgs.Count;
+            while (--i >= 0) {
                 string textArg = textArgs[i];
-                SubstituteAlias(aliases, ref textArg, ref target);
-                
-                ParameterInfo parameter = parameters[target];
-                args[target] = Convert.ChangeType(textArg, parameter.ParameterType);
+                MethodOption option;
+                if (TrySubstituteOption(options, textArg, out option)) {
+                    textArgs.RemoveAt(i);
+                    _host.AddOption(option.Alias, option.Value);
+                }
             }
             
+            // Convert the arguments.
+            for (i = 0; i < textArgs.Count; i++) {
+                string textArg = textArgs[i];
+                ParameterInfo parameter = parameters[i];
+                args[i] = ConvertArgument(textArg, parameter.ParameterType);
+            }
+            
+            // Account for optional arguments.
             List<string> missingBindings = new List<string>();
-            if (textArgs.Length < args.Length) {
-                for (int i = 0; i < args.Length; i++) {
+            if (textArgs.Count < args.Length) {
+                for (i = 0; i < args.Length; i++) {
                     object arg = args[i];
                     if (arg == null) {
                         ParameterInfo parameter = parameters[i];
@@ -67,19 +77,28 @@ namespace ThorNet {
             return args;
         }
         
-        private Dictionary<string, int> GetAliases(ParameterInfo[] parameters) {
-            Dictionary<string, int> aliases = parameters.Select((p, i) => new { p, i })
-                                                        .ToDictionary(x => "--" + x.p.Name, x => x.i);
-            
-            foreach (MethodOptionAttribute option in _options) {
-                aliases.Add(option.Alias, aliases["--" + option.Name]);
+        private object ConvertArgument(string text, Type type) {
+ 
+            if (type.GetTypeInfo().IsEnum) {
+                return Enum.Parse(type, text);
             }
-            
-            return aliases;
+            return Convert.ChangeType(text, type);
+        }
+        
+        private Dictionary<string, MethodOption> GetOptions() {
+            return _options.SelectMany(o => {
+                var option = new MethodOption(o.Name);
+                
+                return new [] { 
+                    new { Key = o.Alias, Option = option },
+                    new { Key = "--" + o.Name, Option = option }
+                };
+            })
+             .ToDictionary(x => x.Key, x => x.Option);
         }
         
         public void Invoke(string[] args) {
-            object result = _method.Invoke(_host, BindArguments(args));
+            object result = _method.Invoke(_host, BindArguments(args.ToList()));
             
             if (typeof(Task).IsAssignableFrom(_method.ReturnType)) {
                 Task task = (Task)result;
@@ -87,7 +106,8 @@ namespace ThorNet {
             }
         }
         
-        private void SubstituteAlias(Dictionary<string, int> aliases, ref string text, ref int target) {
+        private bool TrySubstituteOption(Dictionary<string, MethodOption> options, string text, out MethodOption option) {
+            option = null;
             if (text.Length > 0 && text[0] == '-') {
                 string alias;
                 string textValue;
@@ -112,14 +132,25 @@ namespace ThorNet {
                 }
                 
                 if (alias != null) {
-                    if (aliases.TryGetValue(alias, out target)) {
-                        text = textValue; 
+                    if (options.TryGetValue(alias, out option)) {
+                        option.Value = textValue;
+                        return true; 
                     }
                     else { 
-                        // TODO
+                        return false;
                     }
                 }
             }
+            
+            return false;
+        }
+        
+        private class MethodOption {
+            public MethodOption(string alias) {
+                Alias = alias;
+            }
+            public string Alias { get; }
+            public string Value { get; set; }
         }
     }
 }

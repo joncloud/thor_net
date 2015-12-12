@@ -7,9 +7,20 @@ namespace ThorNet {
     public class Thor {
         
         private Dictionary<string, ThorCommand> _commands;
+        private Dictionary<string, List<string>> _options;
         
         public Thor() {
             _commands = LoadCommands();
+            _options = new Dictionary<string, List<string>>();
+        }
+        
+        internal void AddOption(string name, string value) {
+            List<string> values;
+            if (!_options.TryGetValue(name, out values)) {
+                values = new List<string>();
+                _options.Add(name, values);
+            }
+            values.Add(value);
         }
         
         [Desc("help [COMMAND]", "Describe available commands or one specific command")]
@@ -20,7 +31,7 @@ namespace ThorNet {
                 foreach (ThorCommand command in _commands.OrderBy(p => p.Key).Select(p => p.Value)) {
                     string message = $"  dnx {name} {command.Example}\t# {command.Description}";
                     if (message.Length > Console.WindowWidth) {
-                        message = message.Substring(0, Console.WindowWidth - 3);
+                        message = message.Substring(0, Console.WindowWidth - 9);
                         message += "...";
                     }
                     Console.WriteLine(message);
@@ -74,6 +85,32 @@ namespace ThorNet {
                         .Where(m => typeof(Thor).IsAssignableFrom(m.DeclaringType))
                         .Select(m => new ThorCommand(this, m))
                         .ToDictionary(c => c.Name);
+        }
+        
+        protected string Option(string name) {
+            return Options(name).FirstOrDefault();
+        }
+        
+        protected T Option<T>(string name, Func<string, T> convert = null) {
+            return Options<T>(name, convert).FirstOrDefault();
+        }
+        
+        protected IEnumerable<string> Options(string name) {
+            List<string> options;
+            if (_options.TryGetValue(name, out options)) {
+                return options;
+            }
+            else {
+                return new string[0]; 
+            }
+        }
+        
+        protected IEnumerable<T> Options<T>(string name, Func<string, T> convert = null) {
+            if (convert == null) {
+                convert = s => (T)Convert.ChangeType(s, typeof(T));
+            }
+            
+            return Options(name).Select(convert);
         }
         
         public static void Start<T>(string[] args)
