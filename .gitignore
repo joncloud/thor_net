@@ -39,6 +39,8 @@ TestResult.xml
 dlldata.c
 
 # DNX
+launchSettings.json
+debugSettings.json
 project.lock.json
 artifacts/
 
