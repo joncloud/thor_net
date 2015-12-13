@@ -47,9 +47,9 @@ namespace ThorNet.UnitTests {
 			string[] actualAliases = target.Options.Select(o => o.Alias).ToArray();
 			string[] actualDescriptions = target.Options.Select(o => o.Description).ToArray();
 			
-			string[] expectedNames = FromList(namesList);
-			string[] expectedAliases = FromList(aliasesList);
-			string[] expectedDescriptions = FromList(descriptionsList);
+			string[] expectedNames = Utility.ToArray(namesList);
+			string[] expectedAliases = Utility.ToArray(aliasesList);
+			string[] expectedDescriptions = Utility.ToArray(descriptionsList);
 			
 			Assert.Equal(expectedNames, actualNames);
 			Assert.Equal(expectedAliases, actualAliases);
@@ -66,7 +66,7 @@ namespace ThorNet.UnitTests {
 			Assert.True(target.Parameters.All(p => p is ParameterInfoWrapper), "MethodInfoWrapper does not use ParameterInfoWrapper.");
 			
 			string[] actual = target.Parameters.Select(p => p.Name).ToArray();
-			string[] expected = FromList(parametersList);
+			string[] expected = Utility.ToArray(parametersList);
 			
 			Assert.Equal(expected, actual);
 		}
@@ -75,10 +75,6 @@ namespace ThorNet.UnitTests {
 			MethodInfo method = typeof(Helper).GetMethod(name);
 			
 			return new MethodInfoWrapper(method);
-		}
-		
-		private static string[] FromList(string list) {
-			return list.Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 		}
 		
 		public class Helper {

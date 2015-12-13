@@ -25,43 +25,15 @@ namespace ThorNet {
         private object[] BindArguments(List<string> textArgs) {
             IParameter[] parameters = _command.Parameters.ToArray();
             
-            object[] args = new object[parameters.Length];
-            
             // Map the options.
             Dictionary<string, MethodOption> options = GetOptions();
-            int i = textArgs.Count;
-            while (--i >= 0) {
-                string textArg = textArgs[i];
-                MethodOption option;
-                if (TrySubstituteOption(options, textArg, out option)) {
-                    textArgs.RemoveAt(i);
-                    _host.AddOption(option.Alias, option.Value);
-                }
-            }
+            OptionSubstitutor substitutor = new OptionSubstitutor();
+            substitutor.Substitute(_host, options, textArgs); 
             
             // Convert the arguments.
-            for (i = 0; i < textArgs.Count; i++) {
-                string textArg = textArgs[i];
-                IParameter parameter = parameters[i];
-                args[i] = TypeHelper.Convert(textArg, parameter.Type);
-            }
-            
-            // Account for optional arguments.
-            List<string> missingBindings = new List<string>();
-            if (textArgs.Count < args.Length) {
-                for (i = 0; i < args.Length; i++) {
-                    object arg = args[i];
-                    if (arg == null) {
-                        IParameter parameter = parameters[i];
-                        if (parameter.HasDefaultValue) {
-                            args[i] = parameter.DefaultValue;
-                        }
-                        else {
-                            missingBindings.Add(parameter.Name);
-                        }
-                    }
-                }
-            }
+            ParameterBinder binder = new ParameterBinder();
+            object[] args;
+            string[] missingBindings = binder.Bind(textArgs, parameters, out args).ToArray();
             
             if (missingBindings.Any()) {
                 throw new AmbiguousMatchException($"Mismatched parameter(s): {string.Join(", ", missingBindings)}.");
@@ -99,53 +71,6 @@ namespace ThorNet {
                 Task task = (Task)result;
                 task.Wait();
             }
-        }
-        
-        private bool TrySubstituteOption(Dictionary<string, MethodOption> options, string text, out MethodOption option) {
-            option = null;
-            if (text.Length > 0 && text[0] == '-') {
-                string alias;
-                string textValue;
-                
-                int position;
-                int offset = 0;
-                if (text.Length > 2 && text[1] == '-') {
-                    position = text.IndexOf("=");
-                    offset = 1;
-                }
-                else {
-                    position = 2;
-                }
-                
-                if (position > 0) {
-                    alias = text.Substring(0, position);
-                    textValue = text.Substring(position + offset, text.Length - position - offset);
-                }
-                else { 
-                    alias = null;
-                    textValue = null; 
-                }
-                
-                if (alias != null) {
-                    if (options.TryGetValue(alias, out option)) {
-                        option.Value = textValue;
-                        return true; 
-                    }
-                    else { 
-                        return false;
-                    }
-                }
-            }
-            
-            return false;
-        }
-        
-        private class MethodOption {
-            public MethodOption(string alias) {
-                Alias = alias;
-            }
-            public string Alias { get; }
-            public string Value { get; set; }
         }
     }
 }
