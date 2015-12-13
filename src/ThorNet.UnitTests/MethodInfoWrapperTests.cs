@@ -14,9 +14,7 @@ namespace ThorNet.UnitTests {
 		[InlineData("Void_WithExample", null, "Sit", typeof(void))]
 		[Theory]
 		public void Ctor_Tests(string name, string description, string example, Type returnType) {
-			MethodInfo method = typeof(Helper).GetMethod(name);
-			
-			MethodInfoWrapper target = new MethodInfoWrapper(method);
+			MethodInfoWrapper target = Create(name);
 			
 			Assert.Equal(name, target.Name);
 			Assert.Equal(description, target.Description);
@@ -24,11 +22,26 @@ namespace ThorNet.UnitTests {
 			Assert.Equal(returnType, target.ReturnType);
 		}
 		
+		[InlineData("Int", 0)]
+		[InlineData("Int", 1)]
+		[InlineData("Int", 2)]
+		[InlineData("String", null)]
+		[InlineData("String", "a")]
+		[InlineData("String", "abc")]
+		[InlineData("Void", null)]
+		public void Invoke_Tests(string name, object expected) {
+			MethodInfoWrapper target = Create(name);
+			
+			Helper helper = new Helper(expected);
+			
+			object actual = target.Invoke(helper, new object[0]);
+			
+			Assert.Equal(expected, actual);
+		}
+		
 		[InlineData("Void_WithMethodOption", "alpha,omega", "a,o", "beginning,ending")]
 		public void Options_Tests(string name, string namesList, string aliasesList, string descriptionsList) {
-			MethodInfo method = typeof(Helper).GetMethod(name);
-			
-			MethodInfoWrapper target = new MethodInfoWrapper(method);
+			MethodInfoWrapper target = Create(name);
 			
 			string[] actualNames = target.Options.Select(o => o.Name).ToArray();
 			string[] actualAliases = target.Options.Select(o => o.Alias).ToArray();
@@ -48,9 +61,7 @@ namespace ThorNet.UnitTests {
 		[InlineData("Void_WithParametersXY", "x,y")]
 		[InlineData("Void_WithParametersXYZ", "x,y,z")]
 		public void Parameters_Tests(string name, string parametersList) {
-			MethodInfo method = typeof(Helper).GetMethod(name);
-			
-			MethodInfoWrapper target = new MethodInfoWrapper(method);
+			MethodInfoWrapper target = Create(name);
 		
 			Assert.True(target.Parameters.All(p => p is ParameterInfoWrapper), "MethodInfoWrapper does not use ParameterInfoWrapper.");
 			
@@ -60,13 +71,24 @@ namespace ThorNet.UnitTests {
 			Assert.Equal(expected, actual);
 		}
 		
+		private static MethodInfoWrapper Create(string name) {
+			MethodInfo method = typeof(Helper).GetMethod(name);
+			
+			return new MethodInfoWrapper(method);
+		}
+		
 		private static string[] FromList(string list) {
 			return list.Split(new [] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 		}
 		
 		public class Helper {
-			public int Int() { return 0; }
-			public string String() { return ""; }
+			private object _result;
+			public Helper(object result) {
+				_result = result;
+			}
+			
+			public int Int() { return (int)_result; }
+			public string String() { return (string)_result; }
 			public void Void() { }
 			[Desc(null, "Lorem")]
 			public void Void_WithDescription() { }
