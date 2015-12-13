@@ -75,7 +75,7 @@ namespace ThorNet {
         
         internal void Invoke(string commandName, string[] args) {
             foreach (string invalid in _commands.Where(p => p.Value.Example == null).Select(p => p.Value.Name)) {
-                Terminal.WriteLine($"[WARNING] Attempted to create command \"{invalid}\" without usage or description. Add desc if you want this method to be available as command, or declare it inside no_commands block.");   
+                Terminal.WriteLine($"[WARNING] Attempted to create command \"{invalid}\" without usage or description. Add Desc if you want this method to be available as command, or declare it as a non-public member.");   
             }
             
             ThorCommand command;
