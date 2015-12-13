@@ -9,10 +9,17 @@ namespace ThorNet {
         private Dictionary<string, ThorCommand> _commands;
         private Dictionary<string, List<string>> _options;
         
-        public Thor() {
+        public Thor() 
+            : this(new ConsoleWrapper()) {
             _commands = LoadCommands();
             _options = new Dictionary<string, List<string>>();
         }
+        
+        public Thor(ITerminal terminal) {
+            Terminal = terminal;
+        }
+        
+        public ITerminal Terminal { get; }
         
         internal void AddOption(string name, string value) {
             List<string> values;
@@ -34,41 +41,41 @@ namespace ThorNet {
             if (commandName == null) {
                 foreach (ThorCommand command in _commands.OrderBy(p => p.Key).Select(p => p.Value)) {
                     string message = $"  dnx {name} {command.Example}\t# {command.Description}";
-                    if (message.Length > Console.WindowWidth) {
-                        message = message.Substring(0, Console.WindowWidth - 9);
+                    if (message.Length > Terminal.Width) {
+                        message = message.Substring(0, Terminal.Width - 9);
                         message += "...";
                     }
-                    Console.WriteLine(message);
+                    Terminal.WriteLine(message);
                 }
             }
             else {
                 ThorCommand command;
                 if (_commands.TryGetValue(commandName, out command)) {
-                    Console.WriteLine("Usage:");
-                    Console.WriteLine($" dnx {name} {command.Example}");
-                    Console.WriteLine();
+                    Terminal.WriteLine("Usage:");
+                    Terminal.WriteLine($" dnx {name} {command.Example}");
+                    Terminal.WriteLine();
                     
                     // Print the options.
                     MethodOptionAttribute[] options = command.Options.ToArray();
                     if (options.Any()) {
-                        Console.WriteLine("Options:");
+                        Terminal.WriteLine("Options:");
                         foreach (MethodOptionAttribute option in options) {
-                            Console.WriteLine($"  {option.Alias}, [--{option.Name}={option.Name.ToUpper()}]\t# {option.Description}");
+                            Terminal.WriteLine($"  {option.Alias}, [--{option.Name}={option.Name.ToUpper()}]\t# {option.Description}");
                         }
-                        Console.WriteLine();
+                        Terminal.WriteLine();
                     }
                     
-                    Console.WriteLine(command.Description);
+                    Terminal.WriteLine(command.Description);
                 }
                 else {
-                    Console.WriteLine($"Could not find command \"{commandName}\".");
+                    Terminal.WriteLine($"Could not find command \"{commandName}\".");
                 }
             }
         }
         
         internal void Invoke(string commandName, string[] args) {
             foreach (string invalid in _commands.Where(p => p.Value.Example == null).Select(p => p.Value.Name)) {
-                Console.WriteLine($"[WARNING] Attempted to create command \"{invalid}\" without usage or description. Add desc if you want this method to be available as command, or declare it inside no_commands block.");   
+                Terminal.WriteLine($"[WARNING] Attempted to create command \"{invalid}\" without usage or description. Add desc if you want this method to be available as command, or declare it inside no_commands block.");   
             }
             
             ThorCommand command;
@@ -76,7 +83,7 @@ namespace ThorNet {
                 command.Invoke(args);
             }
             else {
-                Console.WriteLine($"Could not find command \"{commandName}\".");
+                Terminal.WriteLine($"Could not find command \"{commandName}\".");
             }
         }
         
