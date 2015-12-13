@@ -50,7 +50,7 @@ namespace ThorNet {
             for (i = 0; i < textArgs.Count; i++) {
                 string textArg = textArgs[i];
                 ParameterInfo parameter = parameters[i];
-                args[i] = ConvertArgument(textArg, parameter.ParameterType);
+                args[i] = TypeHelper.Convert(textArg, parameter.ParameterType);
             }
             
             // Account for optional arguments.
@@ -77,14 +77,6 @@ namespace ThorNet {
             return args;
         }
         
-        private object ConvertArgument(string text, Type type) {
- 
-            if (type.GetTypeInfo().IsEnum) {
-                return Enum.Parse(type, text);
-            }
-            return Convert.ChangeType(text, type);
-        }
-        
         private Dictionary<string, MethodOption> GetOptions() {
             return _options.SelectMany(o => {
                 var option = new MethodOption(o.Name);
@@ -98,7 +90,17 @@ namespace ThorNet {
         }
         
         public void Invoke(string[] args) {
-            object result = _method.Invoke(_host, BindArguments(args.ToList()));
+            object[] arguments = BindArguments(args.ToList());
+            
+            // Provide default values for options..
+            foreach (MethodOptionAttribute option in _options) {
+                if (option.DefaultValue != null &&
+                    !_host.HasOption(option.Name)) {
+                    _host.AddOption(option.Name, option.DefaultValue);
+                }
+            }
+            
+            object result = _method.Invoke(_host, arguments);
             
             if (typeof(Task).IsAssignableFrom(_method.ReturnType)) {
                 Task task = (Task)result;

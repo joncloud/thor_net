@@ -23,6 +23,10 @@ namespace ThorNet {
             values.Add(value);
         }
         
+        internal bool HasOption(string name) {
+            return _options.ContainsKey(name);
+        }
+        
         [Desc("help [COMMAND]", "Describe available commands or one specific command")]
         public void help(string commandName = null) {
             string name = GetType().GetTypeInfo().Assembly.GetName().Name;
@@ -87,12 +91,12 @@ namespace ThorNet {
                         .ToDictionary(c => c.Name);
         }
         
-        protected string Option(string name) {
-            return Options(name).FirstOrDefault();
+        protected string Option(string name, Func<string> defaultValue = null) {
+            return Options(name).FirstOrDefault() ?? defaultValue?.Invoke();
         }
         
-        protected T Option<T>(string name, Func<string, T> convert = null) {
-            return Options<T>(name, convert).FirstOrDefault();
+        protected T Option<T>(string name, Func<string, T> convert = null, Func<T> defaultValue = null) {
+            return Options<T>(name, convert, defaultValue).FirstOrDefault();
         }
         
         protected IEnumerable<string> Options(string name) {
@@ -105,12 +109,23 @@ namespace ThorNet {
             }
         }
         
-        protected IEnumerable<T> Options<T>(string name, Func<string, T> convert = null) {
+        protected IEnumerable<T> Options<T>(string name, Func<string, T> convert = null, Func<T> defaultValue = null) {
             if (convert == null) {
-                convert = s => (T)Convert.ChangeType(s, typeof(T));
+                convert = s => TypeHelper.Convert<T>(s);
             }
             
-            return Options(name).Select(convert);
+            IEnumerable<string> options = Options(name);
+            if (options.Any()) {
+                return options.Select(convert);
+            }
+            else {
+                if (defaultValue == null) {
+                    return new T[0];
+                }
+                else {
+                    return new [] { defaultValue() };
+                }
+            }
         }
         
         public static void Start<T>(string[] args)

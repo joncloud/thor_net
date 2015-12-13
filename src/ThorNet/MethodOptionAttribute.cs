@@ -10,6 +10,7 @@ namespace ThorNet {
         }
         
         public string Alias { get; }
+        public string DefaultValue { get; set; }
         public string Description { get; }
         public string Name { get; }
     }
