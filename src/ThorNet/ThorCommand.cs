@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 namespace ThorNet {
 	public class ThorCommand {
         
-        private readonly Thor _host;
+        private readonly IThor _host;
         private readonly MethodInfo _method;
         private readonly MethodOptionAttribute[] _options;
         
-        public ThorCommand(Thor host, MethodInfo method) {
+        public ThorCommand(IThor host, MethodInfo method) {
             _host = host;
             _method = method;
             

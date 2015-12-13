@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 
 namespace ThorNet {
-    public class Thor {
+    public class Thor : IThor {
         
         private Dictionary<string, ThorCommand> _commands;
         private Dictionary<string, List<string>> _options;
@@ -21,7 +21,7 @@ namespace ThorNet {
         
         public ITerminal Terminal { get; }
         
-        internal void AddOption(string name, string value) {
+        void IThor.AddOption(string name, string value) {
             List<string> values;
             if (!_options.TryGetValue(name, out values)) {
                 values = new List<string>();
@@ -30,7 +30,7 @@ namespace ThorNet {
             values.Add(value);
         }
         
-        internal bool HasOption(string name) {
+        bool IThor.HasOption(string name) {
             return _options.ContainsKey(name);
         }
         
@@ -94,7 +94,7 @@ namespace ThorNet {
             
             return type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
                         .Where(m => typeof(Thor).IsAssignableFrom(m.DeclaringType))
-                        .Select(m => new ThorCommand(this, m))
+                        .Select(m => new ThorCommand((IThor)this, m))
                         .ToDictionary(c => c.Name);
         }
         
