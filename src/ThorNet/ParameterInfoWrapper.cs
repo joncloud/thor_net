@@ -10,7 +10,7 @@ namespace ThorNet {
 			_parameter = parameter;
 		}
 		
-		public object DefaultValue { get { return _parameter.DefaultValue; } }
+		public object DefaultValue { get { return HasDefaultValue ? _parameter.DefaultValue : null; } }
 		public bool HasDefaultValue { get { return _parameter.HasDefaultValue; } }
 		public string Name { get { return _parameter.Name; } }
 		public Type Type { get { return _parameter.ParameterType; } }
