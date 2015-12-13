@@ -7,30 +7,23 @@ using System.Threading.Tasks;
 namespace ThorNet {
 	public class ThorCommand {
         
+        private readonly ICommand _command;
         private readonly IThor _host;
-        private readonly MethodInfo _method;
         private readonly MethodOptionAttribute[] _options;
         
-        public ThorCommand(IThor host, MethodInfo method) {
+        public ThorCommand(IThor host, ICommand command) {
+            _command = command;
             _host = host;
-            _method = method;
-            
-            DescAttribute desc = _method.GetCustomAttribute<DescAttribute>();
-            if (desc != null) {
-                Description = desc.Description;
-                Example = desc.Example;
-            }
-            
-            _options = _method.GetCustomAttributes<MethodOptionAttribute>().ToArray();
+            _options = _command.Options.ToArray();
         }
         
-        public string Description { get; }
-        public string Example { get; }
-        public string Name { get { return _method.Name; } }
+        public string Description { get { return _command.Description; } }
+        public string Example { get { return _command.Example; } }
+        public string Name { get { return _command.Name; } }
         public IEnumerable<MethodOptionAttribute> Options { get { return _options; } }
         
         private object[] BindArguments(List<string> textArgs) {
-            ParameterInfo[] parameters = _method.GetParameters();
+            IParameter[] parameters = _command.Parameters.ToArray();
             
             object[] args = new object[parameters.Length];
             
@@ -49,8 +42,8 @@ namespace ThorNet {
             // Convert the arguments.
             for (i = 0; i < textArgs.Count; i++) {
                 string textArg = textArgs[i];
-                ParameterInfo parameter = parameters[i];
-                args[i] = TypeHelper.Convert(textArg, parameter.ParameterType);
+                IParameter parameter = parameters[i];
+                args[i] = TypeHelper.Convert(textArg, parameter.Type);
             }
             
             // Account for optional arguments.
@@ -59,7 +52,7 @@ namespace ThorNet {
                 for (i = 0; i < args.Length; i++) {
                     object arg = args[i];
                     if (arg == null) {
-                        ParameterInfo parameter = parameters[i];
+                        IParameter parameter = parameters[i];
                         if (parameter.HasDefaultValue) {
                             args[i] = parameter.DefaultValue;
                         }
@@ -100,9 +93,9 @@ namespace ThorNet {
                 }
             }
             
-            object result = _method.Invoke(_host, arguments);
+            object result = _command.Invoke(_host, arguments);
             
-            if (typeof(Task).IsAssignableFrom(_method.ReturnType)) {
+            if (typeof(Task).IsAssignableFrom(_command.ReturnType)) {
                 Task task = (Task)result;
                 task.Wait();
             }

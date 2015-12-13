@@ -93,8 +93,9 @@ namespace ThorNet {
             Type type = GetType(); 
             
             return type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                        .Where(m => typeof(Thor).IsAssignableFrom(m.DeclaringType))
-                        .Select(m => new ThorCommand((IThor)this, m))
+                        .Where(m => typeof(Thor).IsAssignableFrom(m.DeclaringType) &&
+                                    !m.IsSpecialName)
+                        .Select(m => new ThorCommand((IThor)this, new MethodInfoWrapper(m)))
                         .ToDictionary(c => c.Name);
         }
         
