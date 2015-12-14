@@ -7,30 +7,84 @@ using System.Threading.Tasks;
 
 namespace ThorNet.Terminal
 {
-    public class Program {
+    public class Program : Thor {
         public static void Main(string[] args) {
-            Thor.Start<MyThor>(args);
+            Start<Program>(args);
         }
-    }
-    
-    public class MyThor : Thor {
-        [Desc("roll SIDES COUNT", "rolls dice")]
-        [MethodOption("count", "-c", "The total number of times to roll the dice.")]
-        [MethodOption("sides", "-s", "The total number of sides on the dice to roll.")]
-        public void roll(int sides, int count = 1) {
-            Console.WriteLine($"Rolling {count}d{sides}");
-            Random random = new Random();
-            while (--count >= 0) {
-                int value = random.Next(1, sides + 1);
-                Console.WriteLine($"1d{sides}\t{value}");
+        
+        [Desc("roll EXPR", "rolls dice using D&D notation, i.e., 2d6.")]
+        public void roll(string expr) {
+            Dice dice;
+            if (Dice.TryParse(expr, out dice)) {
+                Console.WriteLine($"Rolling {expr}");
+                int[] results = dice.Roll();
+                foreach (int result in results) {
+                    Console.WriteLine($"\t{result}");
+                }
+            } 
+            else {
+                Console.WriteLine("Invalid dice expression.");
             }
         }
         
-        [Desc("rollAsync SIDES COUNT", "rolls dice asynchronously")]
-        [MethodOption("count", "-c", "The total number of times to roll the dice.")]
-        [MethodOption("sides", "-s", "The total number of sides on the dice to roll.")]
-        public Task rollAsync(int sides, int count = 1) {
-            return Task.Run(() => roll(sides, count));
+        [Desc("roll EXPR", "rolls dice using D&D notation, i.e., 2d6 asynchronously.")]
+        public Task rollAsync(string expr) {
+            return Task.Run(() => roll(expr));
+        }
+    }
+    
+    public class Dice {
+        
+        private Random _random = new Random();
+        
+        public Dice(int sides)
+            : this(sides, 1) {
+            
+        }
+        
+        public Dice(int sides, int count) {
+            if (sides <= 0) throw new ArgumentOutOfRangeException(nameof(sides));
+            if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count));
+            
+            Count = count;
+            Sides = sides;
+        }
+        
+        public int Count { get; }
+        public int Sides { get; }
+        
+        public int[] Roll() {
+            int[] results = new int[Count];
+            for (int i = 0; i < results.Length; i++) {
+                results[i] = _random.Next(1, Sides + 1);
+            }
+            return results;
+        }
+        
+        public static bool TryParse(string text, out Dice dice) {
+            
+            dice = null;
+            
+            string[] parts = text.Split(new [] { 'd' }, StringSplitOptions.RemoveEmptyEntries);
+            int[] values = new int[parts.Length];
+            
+            for (int i = 0; i < parts.Length; i++) {
+                if (!int.TryParse(parts[i], out values[i])) {
+                    return false;
+                }
+            }
+            
+            switch (parts.Length) {
+                case 1:
+                    dice = new Dice(values[0]);
+                    return true;
+                    break;
+                case 2:
+                    dice = new Dice(values[1], values[0]);
+                    return true;
+                default:
+                    return false;
+            }
         }
     }
 }
