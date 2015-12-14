@@ -21,6 +21,11 @@ namespace ThorNet {
         
         public ITerminal Terminal { get; }
         
+		/// <summary>
+		/// Adds an option's value by name.
+		/// </summary>
+		/// <param name="name">The name of the option to provide a value for.</param>
+		/// <param name="value">The value to provide.</param>
         void IThor.AddOption(string name, string value) {
             List<string> values;
             if (!_options.TryGetValue(name, out values)) {
@@ -30,6 +35,11 @@ namespace ThorNet {
             values.Add(value);
         }
         
+		/// <summary>
+		/// Determines if the option has already been specified.
+		/// </summary>
+		/// <param name="name">The name of the option.</param>
+		/// <returns>True if there is a value for the option, otherwise false.</returns>
         bool IThor.HasOption(string name) {
             return _options.ContainsKey(name);
         }
@@ -38,6 +48,7 @@ namespace ThorNet {
         public void help(string commandName = null) {
             string name = GetType().GetTypeInfo().Assembly.GetName().Name;
             
+            // Print all of the commands.
             if (commandName == null) {
                 foreach (ThorCommand command in _commands.OrderBy(p => p.Key).Select(p => p.Value)) {
                     string message = $"  dnx {name} {command.Example}\t# {command.Description}";
@@ -48,6 +59,8 @@ namespace ThorNet {
                     Terminal.WriteLine(message);
                 }
             }
+            
+            // Print a specific command.
             else {
                 ThorCommand command;
                 if (_commands.TryGetValue(commandName, out command)) {
@@ -73,8 +86,15 @@ namespace ThorNet {
             }
         }
         
+        /// <summary>
+        /// Invokes a command by name with the given arguments.
+        /// </summary>
+        /// <param name="commandName">The name of the command to invoke.</param>
+        /// <param name="args">The arguments to provide to the command.</param>
         internal void Invoke(string commandName, string[] args) {
-            foreach (string invalid in _commands.Where(p => p.Value.Example == null).Select(p => p.Value.Name)) {
+            // Show warnings for any public methods that don't have examples defined.
+            foreach (string invalid in _commands.Where(p => p.Value.Example == null)
+                                                .Select(p => p.Value.Name)) {
                 Terminal.WriteLine($"[WARNING] Attempted to create command \"{invalid}\" without usage or description. Add Desc if you want this method to be available as command, or declare it as a non-public member.");   
             }
             
@@ -92,6 +112,7 @@ namespace ThorNet {
             
             Type type = GetType(); 
             
+            // Find all public instance methods.  Ignore any public properties.
             return type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
                         .Where(m => typeof(Thor).IsAssignableFrom(m.DeclaringType) &&
                                     !m.IsSpecialName)
@@ -99,14 +120,32 @@ namespace ThorNet {
                         .ToDictionary(c => c.Name);
         }
         
+        /// <summary>
+        /// Gets the first option provided by name.
+        /// </summary>
+        /// <param name="name">The name of the option.</param>
+        /// <param name="defaultValue">The delegate used to provide a default value if no option is found.</param>
+        /// <returns>The option's value.</returns>
         protected string Option(string name, Func<string> defaultValue = null) {
             return Options(name).FirstOrDefault() ?? defaultValue?.Invoke();
         }
         
+        /// <summary>
+        /// Gets the first option provided by name converted to the type specified.
+        /// </summary>
+        /// <param name="name">The name of the option.</param>
+        /// <param name="convert">The delegate used for converting the text value to the type value.</param>
+        /// <param name="defaultValue">The delegate used to provide a default value if no option is found.</param>
+        /// <returns>The option's converted value.</returns>
         protected T Option<T>(string name, Func<string, T> convert = null, Func<T> defaultValue = null) {
             return Options<T>(name, convert, defaultValue).FirstOrDefault();
         }
         
+        /// <summary>
+        /// Gets all options provided by name.
+        /// </summary>
+        /// <param name="name">The name of the option.</param>
+        /// <returns>The option's values.</returns>
         protected IEnumerable<string> Options(string name) {
             List<string> options;
             if (_options.TryGetValue(name, out options)) {
@@ -117,6 +156,13 @@ namespace ThorNet {
             }
         }
         
+        /// <summary>
+        /// Gets all options provided byn name converted to the type specified.
+        /// </summary>
+        /// <param name="name">The name of the option.</param>
+        /// <param name="convert">The delegate used for converting the text value to the type value.</param>
+        /// <param name="defaultValue">The delegate used to provide a default value if no option is found.</param>
+        /// <returns>The option's converted values.</returns>
         protected IEnumerable<T> Options<T>(string name, Func<string, T> convert = null, Func<T> defaultValue = null) {
             if (convert == null) {
                 convert = s => TypeHelper.Convert<T>(s);
@@ -136,12 +182,16 @@ namespace ThorNet {
             }
         }
         
+        /// <summary>
+        /// Starts the thor program.
+        /// </summary>
+        /// <param name="args">The arguments given from the command line.</param>
         public static void Start<T>(string[] args)
             where T : Thor, new() {
-                
-            T thor = new T();
-            
+
             string commandName;
+            
+            // Default to help.
             if (!args.Any()) {
                 commandName = nameof(help);
             }
@@ -150,6 +200,7 @@ namespace ThorNet {
                 args = args.Skip(1).ToArray();
             }
             
+            T thor = new T();
             thor.Invoke(commandName, args);
         }
     }
