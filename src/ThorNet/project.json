@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0-*",
+  "version": "0.1.0.0",
   "description": "Thor .NET",
   "authors": [ "joncloud" ],
   "tags": [ "arguments", "command", "console", "shell", "terminal", "thor", "thornet" ],
