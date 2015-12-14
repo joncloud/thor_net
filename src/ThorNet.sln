@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{68E066
 	ProjectSection(SolutionItems) = preProject
 		..\.gitignore = ..\.gitignore
 		..\global.json = ..\global.json
+		..\LICENSE.md = ..\LICENSE.md
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ThorNet.Terminal", "ThorNet.Terminal\ThorNet.Terminal.xproj", "{8DC8C1EE-141B-4AD0-88F2-F3A24B25F686}"

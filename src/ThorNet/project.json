@@ -2,9 +2,10 @@
   "version": "0.1.0-*",
   "description": "Thor .NET",
   "authors": [ "joncloud" ],
-  "tags": [""],
-  "projectUrl": "",
-  "licenseUrl": "",
+  "tags": [ "arguments", "command", "console", "shell", "terminal", "thor", "thornet" ],
+  "projectUrl": "https://github.com/joncloud/thor_net",
+  "licenseUrl": "https://raw.githubusercontent.com/joncloud/thor_net/master/LICENSE.md",
+
   "tooling": {
     "defaultNamespace": "ThorNet"
   },
