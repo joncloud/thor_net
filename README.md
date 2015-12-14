@@ -17,7 +17,7 @@ Or update `project.json` to include a dependency on
 ## Usage
 See [ThorNet.Terminal][] project for sample.
 
-[ThorNet.Terminal]: ThorNet.Terminal/Program.cs
+[ThorNet.Terminal]: src/ThorNet.Terminal/Program.cs
 
 ## Licensing
 Released under the MIT License.  See the [LICENSE][] file for further details.
