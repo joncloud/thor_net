@@ -21,11 +21,11 @@ namespace ThorNet {
         
         public ITerminal Terminal { get; }
         
-		/// <summary>
-		/// Adds an option's value by name.
-		/// </summary>
-		/// <param name="name">The name of the option to provide a value for.</param>
-		/// <param name="value">The value to provide.</param>
+        /// <summary>
+        /// Adds an option's value by name.
+        /// </summary>
+        /// <param name="name">The name of the option to provide a value for.</param>
+        /// <param name="value">The value to provide.</param>
         void IThor.AddOption(string name, string value) {
             List<string> values;
             if (!_options.TryGetValue(name, out values)) {
@@ -34,24 +34,34 @@ namespace ThorNet {
             }
             values.Add(value);
         }
-        
-		/// <summary>
-		/// Determines if the option has already been specified.
-		/// </summary>
-		/// <param name="name">The name of the option.</param>
-		/// <returns>True if there is a value for the option, otherwise false.</returns>
+
+        /// <summary>
+        /// Gets the name of the package for display in the <see cref="help(string)"/> method.
+        /// </summary>
+        protected virtual string GetPackageName()
+        {
+            string name = GetType().GetTypeInfo().Assembly.GetName().Name;
+
+            return $"dnx {name}";
+        }
+
+        /// <summary>
+        /// Determines if the option has already been specified.
+        /// </summary>
+        /// <param name="name">The name of the option.</param>
+        /// <returns>True if there is a value for the option, otherwise false.</returns>
         bool IThor.HasOption(string name) {
             return _options.ContainsKey(name);
         }
         
         [Desc("help [COMMAND]", "Describe available commands or one specific command")]
         public void help(string commandName = null) {
-            string name = GetType().GetTypeInfo().Assembly.GetName().Name;
+            string name = GetPackageName();
             
             // Print all of the commands.
             if (commandName == null) {
                 foreach (ThorCommand command in _commands.OrderBy(p => p.Key).Select(p => p.Value)) {
-                    string message = $"  dnx {name} {command.Example}\t# {command.Description}";
+                    string message = $"  {name} {command.Example}\t# {command.Description}";
                     if (message.Length > Terminal.Width) {
                         message = message.Substring(0, Terminal.Width - 9);
                         message += "...";
@@ -65,7 +75,7 @@ namespace ThorNet {
                 ThorCommand command;
                 if (_commands.TryGetValue(commandName, out command)) {
                     Terminal.WriteLine("Usage:");
-                    Terminal.WriteLine($" dnx {name} {command.Example}");
+                    Terminal.WriteLine($" {name} {command.Example}");
                     Terminal.WriteLine();
                     
                     // Print the options.
