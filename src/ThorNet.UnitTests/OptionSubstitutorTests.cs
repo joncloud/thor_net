@@ -5,14 +5,15 @@ using Xunit;
 
 namespace ThorNet.UnitTests {
 	public class OptionSubstitutorTests {
-		[InlineData("-1", "-1Single", "Single", "")]
-		[InlineData("--one", "--one=Single", "Single", "")]
-		[InlineData("-m,-m,-m", "-m1,-m2,-m3", "1,2,3", "")]
-		[InlineData("-1,-2,-3", "-1one,-2two,-3three", "one,two,three", "")]
-		[InlineData("--one,--two,--three", "--one=one,--two=two,--three=three", "one,two,three", "")]
-		[InlineData("-1", "a,b,c,-1one", "one", "a b c")]
+		[InlineData("-1", "-1Single", "Single", "", false)]
+		[InlineData("--one", "--one=Single", "Single", "", false)]
+		[InlineData("-m,-m,-m", "-m1,-m2,-m3", "1,2,3", "", false)]
+		[InlineData("-1,-2,-3", "-1one,-2two,-3three", "one,two,three", "", false)]
+		[InlineData("--one,--two,--three", "--one=one,--two=two,--three=three", "one,two,three", "", false)]
+		[InlineData("-1", "a,b,c,-1one", "one", "a b c", false)]
+		[InlineData("--one", "--one", "", "", true)]
 		[Theory]
-		public void Substitute_Tests(string optionsList, string textArgsList, string valuesList, string remainingArgs) {
+		public void Substitute_Tests(string optionsList, string textArgsList, string valuesList, string remainingArgs, bool allowFlag) {
 			OptionSubstitutor target = new OptionSubstitutor();
 			
 			List<string> textArgs = Utility.ToArray(textArgsList).ToList();
@@ -22,7 +23,7 @@ namespace ThorNet.UnitTests {
 			for (int i = 0; i < optionsArray.Length; i++) {
 				string option = optionsArray[i];
 				if (!options.ContainsKey(option)) {
-					options.Add(option, new MethodOption(option));
+					options.Add(option, new MethodOption(option) { AllowFlag = allowFlag });
 				}
 			}
 			

@@ -44,7 +44,7 @@ namespace ThorNet {
 		
 		private Dictionary<string, MethodOption> GetOptions() {
 			return _options.SelectMany(o => {
-				var option = new MethodOption(o.Name);
+				var option = new MethodOption(o.Name) { AllowFlag = o.Flag };
 				
 				return new [] { 
 					// Map using the alias (-1) and full name (--one=).

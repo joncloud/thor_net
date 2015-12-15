@@ -36,6 +36,16 @@ namespace ThorNet {
         }
 
         /// <summary>
+        /// Gets the first option and determines if the value was specified.
+        /// </summary>
+        /// <param name="name">The name of the option.</param>
+        /// <returns>True of the option was specified, otherwise false.</returns>
+        protected bool Flag(string name)
+        {
+            return Option(name) != null;
+        }
+
+        /// <summary>
         /// Gets the name of the package for display in the <see cref="help(string)"/> method.
         /// </summary>
         protected virtual string GetPackageName()

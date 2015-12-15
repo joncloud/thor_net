@@ -6,6 +6,7 @@ namespace ThorNet {
 			Alias = alias;
 		}
 		public string Alias { get; }
+		public bool AllowFlag { get; set; }
 		public string Value { get; set; }
 	}
 }

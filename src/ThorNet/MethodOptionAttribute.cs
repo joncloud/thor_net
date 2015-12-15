@@ -26,6 +26,11 @@ namespace ThorNet {
 		/// Gets the description of the option.
 		/// </summary>
 		public string Description { get; }
+
+		/// <summary>
+		/// Gets or sets whether or not this option should be treated as a flag.
+		/// </summary>
+		public bool Flag { get; set; }
 		
 		/// <summary>
 		/// Gets the name of the option.

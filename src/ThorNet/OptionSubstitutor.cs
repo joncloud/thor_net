@@ -30,12 +30,22 @@ namespace ThorNet {
 			if (text.Length > 0 && text[0] == '-') {
 				string alias;
 				string textValue;
-				
+
+				bool isFlag = false;
 				int position;
 				int offset = 0;
 				if (text.Length > 2 && text[1] == '-') {
 					position = text.IndexOf("=");
-					offset = 1;
+
+					// Handle flags.
+					if (position == -1) {
+						position = text.Length;
+						offset = 0;
+						isFlag = true;
+					}
+					else {
+						offset = 1;
+					}
 				}
 				else {
 					position = 2;
@@ -52,6 +62,11 @@ namespace ThorNet {
 				
 				if (alias != null) {
 					if (options.TryGetValue(alias, out option)) {
+						// Determine if flags are allowed
+						if (isFlag && !option.AllowFlag) {
+							option = null;
+							return false;
+						}
 						option.Value = textValue;
 						return true; 
 					}
