@@ -1,6 +1,7 @@
 {
   "authors": [ "joncloud" ],
-  "description": "Thor .NET",
+  "copyright": "Copyright (c) 2015 joncloud (jdberube@gmail.com)",
+  "description": "Thor.NET is a port of a popular ruby framework for command-line interfaces.",
   "frameworks": {
     "dnxcore50": {
       "dependencies": {
@@ -13,9 +14,15 @@
     },
     "net46": { }
   },
+  "iconUrl": "https://raw.githubusercontent.com/joncloud/thor_net/master/nuget.png",
   "licenseUrl": "https://raw.githubusercontent.com/joncloud/thor_net/master/LICENSE.md",
+  "owners": [ "joncloud" ],
   "projectUrl": "https://github.com/joncloud/thor_net",
+  "releaseNotes": "https://github.com/joncloud/thor_net/releases",
+  "repository": { "type": "git" },
+  "summary": "Thor.NET is a port of a popular ruby framework for command-line interfaces.",
   "tags": [ "arguments", "command", "console", "shell", "terminal", "thor", "thornet" ],
+  "title": "Thor .NET",
   "tooling": {
     "defaultNamespace": "ThorNet"
   },
