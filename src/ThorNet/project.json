@@ -1,15 +1,6 @@
 {
-  "version": "0.1.0.0",
-  "description": "Thor .NET",
   "authors": [ "joncloud" ],
-  "tags": [ "arguments", "command", "console", "shell", "terminal", "thor", "thornet" ],
-  "projectUrl": "https://github.com/joncloud/thor_net",
-  "licenseUrl": "https://raw.githubusercontent.com/joncloud/thor_net/master/LICENSE.md",
-
-  "tooling": {
-    "defaultNamespace": "ThorNet"
-  },
-
+  "description": "Thor .NET",
   "frameworks": {
     "dnxcore50": {
       "dependencies": {
@@ -21,5 +12,12 @@
       }
     },
     "net46": { }
-  }
+  },
+  "licenseUrl": "https://raw.githubusercontent.com/joncloud/thor_net/master/LICENSE.md",
+  "projectUrl": "https://github.com/joncloud/thor_net",
+  "tags": [ "arguments", "command", "console", "shell", "terminal", "thor", "thornet" ],
+  "tooling": {
+    "defaultNamespace": "ThorNet"
+  },
+  "version": "0.1.0.0"
 }

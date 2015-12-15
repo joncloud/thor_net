@@ -1,27 +1,27 @@
 {
-    "version": "0.1.0-*",
-    "description": "Thor .NET Unit Tests",
-    "authors": [ "joncloud" ],
-    "tags": [ "" ],
-    "projectUrl": "",
-    "licenseUrl": "",
-    "tooling": {
-      "defaultNamespace": "ThorNet.UnitTests"
-    },
-    "dependencies": {
-        "ThorNet": "0.1.0-*",
-        "xunit": "2.1.0-*",
-        "xunit.runner.dnx": "2.1.0-*"
-    },
-    "commands": {
-        "test": "xunit.runner.dnx"
-    },
-    "frameworks": {
-        "dnxcore50": {
-            "Microsoft.CSharp": "4.0.1-*",
-            "System.Collections": "4.0.11-*",
-            "System.Linq": "4.0.1-*",
-            "System.Threading": "4.0.11-*"
-        }
+  "authors": [ "joncloud" ],
+  "commands": {
+    "test": "xunit.runner.dnx"
+  },
+  "dependencies": {
+    "ThorNet": "0.1.0-*",
+    "xunit": "2.1.0-*",
+    "xunit.runner.dnx": "2.1.0-*"
+  },
+  "description": "Thor .NET Unit Tests",
+  "frameworks": {
+    "dnxcore50": {
+      "Microsoft.CSharp": "4.0.1-*",
+      "System.Collections": "4.0.11-*",
+      "System.Linq": "4.0.1-*",
+      "System.Threading": "4.0.11-*"
     }
+  },
+  "licenseUrl": "",
+  "projectUrl": "",
+  "tags": [ "" ],
+  "tooling": {
+    "defaultNamespace": "ThorNet.UnitTests"
+  },
+  "version": "0.1.0-*"
 }

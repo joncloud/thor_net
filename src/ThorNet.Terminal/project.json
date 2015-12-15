@@ -1,22 +1,12 @@
 {
-  "version": "0.1.0-*",
-  "description": "Thor .NET Console Application",
   "authors": [ "joncloud" ],
-  "tags": [ "" ],
-  "projectUrl": "",
-  "licenseUrl": "",
-  "tooling": {
-    "defaultNamespace": "ThorNet.Terminal"
-  },
-
-  "dependencies": {
-    "ThorNet": "0.1.0-*"
-  },
-
   "commands": {
     "ThorNet.Terminal": "ThorNet.Terminal"
   },
-
+  "dependencies": {
+    "ThorNet": "0.1.0-*"
+  },
+  "description": "Thor .NET Console Application",
   "frameworks": {
     "dnxcore50": {
       "dependencies": {
@@ -27,5 +17,12 @@
         "System.Threading": "4.0.11-*"
       }
     }
-  }
+  },
+  "licenseUrl": "",
+  "projectUrl": "",
+  "tags": [ "" ],
+  "tooling": {
+    "defaultNamespace": "ThorNet.Terminal"
+  },
+  "version": "0.1.0-*"
 }
