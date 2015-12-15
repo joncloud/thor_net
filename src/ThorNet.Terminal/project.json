@@ -1,7 +1,7 @@
 {
   "authors": [ "joncloud" ],
   "commands": {
-    "ThorNet.Terminal": "ThorNet.Terminal"
+    "dice": "ThorNet.Terminal"
   },
   "dependencies": {
     "ThorNet": "0.1.0-*"
