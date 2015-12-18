@@ -1,5 +1,7 @@
 # Thor.NET
 
+<img src="https://travis-ci.org/joncloud/thor_net.svg" />
+
 ## Description
 Thor.NET is a port of the ruby [Thor][] framework for building self-documenting command line utilities.
 

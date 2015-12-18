@@ -1,0 +1,12 @@
+language: csharp
+
+branches:  
+  only:
+    - master
+
+services:  
+    - docker
+
+script:  
+    - docker build --no-cache -t joncloud/thor_net .
+    - docker run -it --rm joncloud/thor_net
