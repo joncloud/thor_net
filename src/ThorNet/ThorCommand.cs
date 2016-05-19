@@ -69,7 +69,7 @@ namespace ThorNet {
 			object result = _command.Invoke(_host, arguments);
 		   
 			// If the result is a task, then make sure to wait for it to complete.  
-			if (typeof(Task).IsAssignableFrom(_command.ReturnType)) {
+			if (typeof(Task).GetTypeInfo().IsAssignableFrom(_command.ReturnType)) {
 				Task task = (Task)result;
 				task.Wait();
 			}

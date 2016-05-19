@@ -130,11 +130,11 @@ namespace ThorNet {
         private Dictionary<string, ThorCommand> LoadCommands() {
             Dictionary<string, ThorCommand> commands = new Dictionary<string, ThorCommand>();
             
-            Type type = GetType(); 
+            var type = GetType().GetTypeInfo(); 
             
             // Find all public instance methods.  Ignore any public properties.
             return type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                        .Where(m => typeof(Thor).IsAssignableFrom(m.DeclaringType) &&
+                        .Where(m => typeof(Thor).GetTypeInfo().IsAssignableFrom(m.DeclaringType) &&
                                     !m.IsSpecialName)
                         .Select(m => new ThorCommand((IThor)this, new MethodInfoWrapper(m)))
                         .ToDictionary(c => c.Name);
