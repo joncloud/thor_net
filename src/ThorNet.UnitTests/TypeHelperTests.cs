@@ -6,9 +6,7 @@ namespace ThorNet.UnitTests {
 		
 		[InlineData("false", typeof(bool), false)]
 		[InlineData("true", typeof(bool), true)]
-		[InlineData("0.0", typeof(decimal), 0)]
-		[InlineData("123", typeof(decimal), 123)]
-		[InlineData("123.456", typeof(decimal), 123.456)]
+		[InlineData("123.456", typeof(double), 123.456)]
 		[InlineData("1", typeof(Helper), Helper.One)]
 		[InlineData("2", typeof(Helper), Helper.Two)]
 		[InlineData("3", typeof(Helper), Helper.Three)]
@@ -20,6 +18,7 @@ namespace ThorNet.UnitTests {
 		[InlineData("456", typeof(int), 456)]
 		[InlineData("", typeof(string), "")]
 		[InlineData("abc", typeof(string), "abc")]
+		[Theory]
 		public void Convert_Tests(string text, Type target, object expected) {
 			object actual = TypeHelper.Convert(text, target);
 			Assert.Equal(expected, actual);
