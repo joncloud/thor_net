@@ -8,11 +8,13 @@ namespace ThorNet {
         
         private Dictionary<string, ThorCommand> _commands;
         private Dictionary<string, List<string>> _options;
+        private Dictionary<string, Func<Thor>> _subCommands;
         
         public Thor() 
             : this(new ConsoleWrapper()) {
             _commands = LoadCommands();
             _options = new Dictionary<string, List<string>>();
+            _subCommands = new Dictionary<string, Func<Thor>>();
         }
         
         public Thor(ITerminal terminal) {
@@ -65,7 +67,7 @@ namespace ThorNet {
         }
         
         [Desc("help [COMMAND]", "Describe available commands or one specific command")]
-        public void help(string commandName = null) {
+        public void help(string commandName = null, string subcommandName = null) {
             string name = GetPackageName();
             
             // Print all of the commands.
@@ -77,6 +79,11 @@ namespace ThorNet {
                         message += "...";
                     }
                     Terminal.WriteLine(message);
+                }
+
+                foreach (var thor in _subCommands.Values.Select(factory => factory()))
+                {
+                    thor.help();
                 }
             }
             
@@ -100,8 +107,18 @@ namespace ThorNet {
                     
                     Terminal.WriteLine(command.Description);
                 }
-                else {
-                    Terminal.WriteLine($"Could not find command \"{commandName}\".");
+                else
+                {
+                    Func<Thor> factory;
+                    if (_subCommands.TryGetValue(commandName, out factory))
+                    {
+                        var thor = factory();
+                        thor.help(subcommandName);
+                    }
+                    else
+                    {
+                        Terminal.WriteLine($"Could not find command \"{commandName}\".");
+                    }
                 }
             }
         }
@@ -123,7 +140,18 @@ namespace ThorNet {
                 command.Invoke(args);
             }
             else {
-                Terminal.WriteLine($"Could not find command \"{commandName}\".");
+                Func<Thor> subCommand;
+                if (_subCommands.TryGetValue(commandName, out subCommand))
+                {
+                    commandName = PrepareInvocationArguments(ref args);
+
+                    subCommand().Invoke(commandName, args);
+                }
+
+                else
+                {
+                    Terminal.WriteLine($"Could not find command \"{commandName}\".");
+                }
             }
         }
         
@@ -177,7 +205,7 @@ namespace ThorNet {
         }
         
         /// <summary>
-        /// Gets all options provided byn name converted to the type specified.
+        /// Gets all options provided by name converted to the type specified.
         /// </summary>
         /// <param name="name">The name of the option.</param>
         /// <param name="convert">The delegate used for converting the text value to the type value.</param>
@@ -201,7 +229,30 @@ namespace ThorNet {
                 }
             }
         }
-        
+
+        /// <summary>
+        /// Prepares the input arguments to invoke <see cref="Thor.Invoke(string, string[])"/>
+        /// </summary>
+        /// <param name="args">The array of arguments provided.  This is modified to remove the first argument if present.</param>
+        /// <returns>The name of the command to invoke.  If no arguments are provided, this defaults to <see cref="help(string)"/>.</returns>
+        internal static string PrepareInvocationArguments(ref string[] args)
+        {
+            string commandName;
+
+            // Default to help.
+            if (!args.Any())
+            {
+                commandName = nameof(help);
+            }
+            else
+            {
+                commandName = args[0];
+                args = args.Skip(1).ToArray();
+            }
+
+            return commandName;
+        }
+
         /// <summary>
         /// Starts the thor program.
         /// </summary>
@@ -209,19 +260,27 @@ namespace ThorNet {
         public static void Start<T>(string[] args)
             where T : Thor, new() {
 
-            string commandName;
-            
-            // Default to help.
-            if (!args.Any()) {
-                commandName = nameof(help);
-            }
-            else {
-                commandName = args[0];
-                args = args.Skip(1).ToArray();
-            }
+            string commandName = PrepareInvocationArguments(ref args);
             
             T thor = new T();
             thor.Invoke(commandName, args);
+        }
+
+        /// <summary>
+        /// Associates a subcommand with this command.
+        /// </summary>
+        /// <typeparam name="T">The type of class to use for a subcommand.</typeparam>
+        /// <param name="name">The optional name of the subcommand.  If no name is provided, then the name of the class is used.</param>
+        protected void Subcommand<T>(string name = null)
+            where T : Thor, new()
+        {
+            name = name ?? typeof(T).Name;
+            if (_commands.ContainsKey(name))
+            {
+                throw new ArgumentOutOfRangeException(nameof(name), $"{name} is a command, and cannot also be a subcommand.");
+            }
+
+            _subCommands.Add(name ?? typeof(T).Name, () => new T());
         }
     }
 }

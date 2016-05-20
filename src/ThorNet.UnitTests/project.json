@@ -2,7 +2,7 @@
   "authors": [ "joncloud" ],
   "dependencies": {
     "dotnet-test-xunit": "1.0.0-rc2-build10015",
-    "ThorNet": "0.2.1",
+    "ThorNet": "0.3.0",
     "xunit": "2.1.0"
   },
   "description": "Thor .NET Unit Tests",
@@ -24,5 +24,5 @@
   "tooling": {
     "defaultNamespace": "ThorNet.UnitTests"
   },
-  "version": "0.2.1"
+  "version": "0.3.0"
 }
