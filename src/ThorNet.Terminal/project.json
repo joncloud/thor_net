@@ -1,28 +1,25 @@
-{
+﻿{
   "authors": [ "joncloud" ],
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
   "commands": {
     "dice": "ThorNet.Terminal"
   },
   "dependencies": {
-    "ThorNet": "0.1.0-*"
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.0-rc2-3002702"
+    },
+    "ThorNet": "0.2.0-0"
   },
-  "description": "Thor .NET Console Application",
   "frameworks": {
-    "dnxcore50": {
-      "dependencies": {
-        "Microsoft.CSharp": "4.0.1-*",
-        "System.Collections": "4.0.11-*",
-        "System.Console": "4.0.0-*",
-        "System.Linq": "4.0.1-*",
-        "System.Threading": "4.0.11-*"
-      }
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
     }
   },
-  "licenseUrl": "",
-  "projectUrl": "",
-  "tags": [ "" ],
   "tooling": {
     "defaultNamespace": "ThorNet.Terminal"
   },
-  "version": "0.1.0-*"
+  "version": "0.2.0-0"
 }
