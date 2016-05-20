@@ -21,6 +21,7 @@ namespace ThorNet {
             Terminal = terminal;
         }
         
+        internal bool IsSubcommand { get; set; }
         public ITerminal Terminal { get; }
         
         /// <summary>
@@ -73,6 +74,8 @@ namespace ThorNet {
             // Print all of the commands.
             if (commandName == null) {
                 foreach (ThorCommand command in _commands.OrderBy(p => p.Key).Select(p => p.Value)) {
+                    if (IsSubcommand && command.Name == nameof(help)) { continue; }
+
                     string message = $"  {name} {command.Example}\t# {command.Description}";
                     if (message.Length > Terminal.Width) {
                         message = message.Substring(0, Terminal.Width - 9);
@@ -109,11 +112,10 @@ namespace ThorNet {
                 }
                 else
                 {
-                    Func<Thor> factory;
-                    if (_subCommands.TryGetValue(commandName, out factory))
+                    Thor subcommand;
+                    if (TryGetSubcommand(commandName, out subcommand))
                     {
-                        var thor = factory();
-                        thor.help(subcommandName);
+                        subcommand.help(subcommandName);
                     }
                     else
                     {
@@ -140,14 +142,13 @@ namespace ThorNet {
                 command.Invoke(args);
             }
             else {
-                Func<Thor> subCommand;
-                if (_subCommands.TryGetValue(commandName, out subCommand))
+                Thor subcommand;
+                if (TryGetSubcommand(commandName, out subcommand))
                 {
                     commandName = PrepareInvocationArguments(ref args);
-
-                    subCommand().Invoke(commandName, args);
+                    subcommand.Invoke(commandName, args);
                 }
-
+                
                 else
                 {
                     Terminal.WriteLine($"Could not find command \"{commandName}\".");
@@ -281,6 +282,22 @@ namespace ThorNet {
             }
 
             _subCommands.Add(name ?? typeof(T).Name, () => new T());
+        }
+
+        bool TryGetSubcommand(string name, out Thor thor)
+        {
+            Func<Thor> factory;
+            if (_subCommands.TryGetValue(name, out factory))
+            {
+                thor = factory();
+                thor.IsSubcommand = true;
+                return true;
+            }
+            else
+            {
+                thor = null;
+                return false;
+            }
         }
     }
 }
