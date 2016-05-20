@@ -67,7 +67,7 @@ namespace ThorNet {
         }
         
         [Desc("help [COMMAND]", "Describe available commands or one specific command")]
-        public void help(string commandName = null) {
+        public void help(string commandName = null, string subcommandName = null) {
             string name = GetPackageName();
             
             // Print all of the commands.
@@ -79,6 +79,11 @@ namespace ThorNet {
                         message += "...";
                     }
                     Terminal.WriteLine(message);
+                }
+
+                foreach (var thor in _subCommands.Values.Select(factory => factory()))
+                {
+                    thor.help();
                 }
             }
             
@@ -102,8 +107,18 @@ namespace ThorNet {
                     
                     Terminal.WriteLine(command.Description);
                 }
-                else {
-                    Terminal.WriteLine($"Could not find command \"{commandName}\".");
+                else
+                {
+                    Func<Thor> factory;
+                    if (_subCommands.TryGetValue(commandName, out factory))
+                    {
+                        var thor = factory();
+                        thor.help(subcommandName);
+                    }
+                    else
+                    {
+                        Terminal.WriteLine($"Could not find command \"{commandName}\".");
+                    }
                 }
             }
         }
