@@ -1,9 +1,5 @@
 language: csharp
 
-branches:  
-  only:
-    - master
-
 services:  
     - docker
 
