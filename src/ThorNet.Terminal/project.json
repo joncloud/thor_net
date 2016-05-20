@@ -1,22 +1,21 @@
-{
+﻿{
   "authors": [ "joncloud" ],
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
   "commands": {
     "dice": "ThorNet.Terminal"
   },
   "dependencies": {
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.0-rc2-3002702"
+    },
     "ThorNet": "0.2.0-0"
   },
-  "description": "Thor .NET Console Application",
   "frameworks": {
-    "netstandard1.5": {
-      "dependencies": {
-        "Microsoft.CSharp": "4.0.1-rc2-24027",
-        "System.Collections": "4.0.11-rc2-24027",
-        "System.Console": "4.0.0-rc2-24027",
-        "System.Linq": "4.1.0-rc2-24027",
-        "System.Runtime.Extensions": "4.1.0-rc2-24027",
-        "System.Threading": "4.0.11-rc2-24027"
-      }
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
     }
   },
   "tooling": {

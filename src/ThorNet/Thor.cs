@@ -52,7 +52,7 @@ namespace ThorNet {
         {
             string name = GetType().GetTypeInfo().Assembly.GetName().Name;
 
-            return $"dnx {name}";
+            return $"dotnet {name}.dll";
         }
 
         /// <summary>
