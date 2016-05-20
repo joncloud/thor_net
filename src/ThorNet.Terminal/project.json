@@ -11,7 +11,7 @@
       "type": "platform",
       "version": "1.0.0-rc2-3002702"
     },
-    "ThorNet": "0.2.0"
+    "ThorNet": "0.2.1"
   },
   "frameworks": {
     "netcoreapp1.0": {
@@ -21,5 +21,5 @@
   "tooling": {
     "defaultNamespace": "ThorNet.Terminal"
   },
-  "version": "0.2.0"
+  "version": "0.2.1"
 }
