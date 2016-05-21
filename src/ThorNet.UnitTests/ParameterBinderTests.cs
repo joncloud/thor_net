@@ -23,7 +23,7 @@ namespace ThorNet.UnitTests {
 			IParameter[] parameters = types.Select(t => new TypeParameter(t)).ToArray();
 			
 			object[] args;
-			IEnumerable<string> missingBindings = target.Bind(textArgs, parameters, out args);
+			var missingBindings = target.Bind(textArgs, parameters, out args);
 			
 			string[] actualArgs = args.Select(a => a.ToString()).ToArray();
 			

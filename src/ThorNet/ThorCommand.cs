@@ -1,11 +1,12 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace ThorNet {
-	public class ThorCommand {
+namespace ThorNet
+{
+    public class ThorCommand {
 		
 		private readonly ICommand _command;
 		private readonly IThor _host;
@@ -35,12 +36,12 @@ namespace ThorNet {
 			// Convert the arguments.
 			ParameterBinder binder = new ParameterBinder();
 			object[] args;
-			string[] missingBindings = binder.Bind(textArgs, parameters, out args).ToArray();
+			var results = binder.Bind(textArgs, parameters, out args).ToArray();
 			
-			if (missingBindings.Any()) {
-				throw new MissingParameterException(
-                    missingBindings,
-                    $"Mismatched parameter(s): {string.Join(", ", missingBindings)}.");
+			if (results.Any()) {
+				throw new MismatchedBindingException(
+                    results,
+                    $"Mismatched parameter(s): {string.Join(", ", results.Select(r => r.Name))}.");
 			}
 			
 			return args;
@@ -83,9 +84,42 @@ namespace ThorNet {
                     task.Wait();
                 }
             }
-            catch (MissingParameterException)
+            catch (MismatchedBindingException ex)
             {
                 _terminal.WriteLine($"\"{Name}\" was called incorrectly. Call as \"{Example}\"");
+
+                const string prefix = "  ";
+                int max = ex.BindingResults.Max(r => r.Name.Length) + prefix.Length;
+                StringBuilder message = new StringBuilder();
+                foreach (var result in ex.BindingResults)
+                {
+                    message.Append(prefix)
+                        .Append(result.Name.ToUpper());
+
+                    if (message.Length < max)
+                    {
+                        int delta = max - message.Length;
+                        message.Append(' ', delta);
+                    }
+                    message.Append(" # ");
+
+                    switch (result.Type)
+                    {
+                        case BindingResultType.InvalidFormat:
+                            message.Append("Invalid format");
+                            break;
+                        case BindingResultType.Missing:
+                            message.Append("Missing parameter");
+                            break;
+                        default:
+                            message.Append("Unknown compatibility");
+                            break;
+                    }
+
+                    _terminal.Truncate(message);
+                    _terminal.WriteLine(message.ToString());
+                    message.Clear();
+                }
             }
         }
 	}

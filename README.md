@@ -69,6 +69,7 @@ If you try to run it without the `name` argument, then it will print an error me
 ```powershell
 PS C:\MyCLI> dotnet MyCLI.dll Hello
 "Hello" was called incorrectly. Call as "Hello NAME"
+  NAME # Missing parameter
 ```
 
 Use C#'s optional parameters to indicate whether a parameter is required:
@@ -220,9 +221,9 @@ class Program : Thor {
 And the command line arguments look the same:
 
 ```powershell
-PS C:\MyCLI> dotnet MyCLI.dll count 1
+PS C:\MyCLI> dotnet MyCLI.dll Count 1
 1
-PS C:\MyCLI> dotnet MyCLI.dll count 2
+PS C:\MyCLI> dotnet MyCLI.dll Count 2
 1
 2
 ```
@@ -230,8 +231,9 @@ PS C:\MyCLI> dotnet MyCLI.dll count 2
 But if the arguments cannot be parsed:
 
 ```powershell
-PS C:\MyCLI> dotnet MyCLI.dll count foo
-TODO document
+PS C:\MyCLI> dotnet MyCLI.dll Count foo
+"Count" was called incorrectly. Call as "count TO"
+  TO # Invalid format
 ```
 
 Options also support types too:
