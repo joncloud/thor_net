@@ -281,7 +281,7 @@ namespace ThorNet {
                 throw new ArgumentOutOfRangeException(nameof(name), $"{name} is a command, and cannot also be a subcommand.");
             }
 
-            _subCommands.Add(name ?? typeof(T).Name, () => new T());
+            _subCommands.Add(name ?? typeof(T).Name, () => new T() { IsSubcommand = true });
         }
 
         bool TryGetSubcommand(string name, out Thor thor)
@@ -290,7 +290,6 @@ namespace ThorNet {
             if (_subCommands.TryGetValue(name, out factory))
             {
                 thor = factory();
-                thor.IsSubcommand = true;
                 return true;
             }
             else
