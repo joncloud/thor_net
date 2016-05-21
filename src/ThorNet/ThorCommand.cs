@@ -9,26 +9,26 @@ namespace ThorNet {
 		
 		private readonly ICommand _command;
 		private readonly IThor _host;
-		private readonly MethodOptionAttribute[] _options;
+		private readonly OptionAttribute[] _options;
         private readonly ITerminal _terminal;
 		
 		public ThorCommand(IThor host, ICommand command, ITerminal terminal) {
 			_command = command;
 			_host = host;
-			_options = _command.Options.ToArray();
+			_options = _command.Options.Concat(host.Options).ToArray();
             _terminal = terminal;
 		}
 		
 		public string Description { get { return _command.Description; } }
 		public string Example { get { return _command.Example; } }
 		public string Name { get { return _command.Name; } }
-		public IEnumerable<MethodOptionAttribute> Options { get { return _options; } }
+		public IEnumerable<OptionAttribute> Options { get { return _options; } }
 		
 		internal object[] BindArguments(List<string> textArgs) {
 			IParameter[] parameters = _command.Parameters.ToArray();
 			
 			// Map the options.
-			Dictionary<string, MethodOption> options = GetOptions();
+			Dictionary<string, Option> options = GetOptions();
 			OptionSubstitutor substitutor = new OptionSubstitutor();
 			substitutor.Substitute(_host, options, textArgs); 
 			
@@ -46,9 +46,9 @@ namespace ThorNet {
 			return args;
 		}
 		
-		private Dictionary<string, MethodOption> GetOptions() {
+		private Dictionary<string, Option> GetOptions() {
 			return _options.SelectMany(o => {
-				var option = new MethodOption(o.Name) { AllowFlag = o.Flag };
+				var option = new Option(o);
 				
 				return new [] { 
 					// Map using the alias (-1) and full name (--one=).
@@ -65,7 +65,7 @@ namespace ThorNet {
                 object[] arguments = BindArguments(args.ToList());
 
                 // Provide default values for options..
-                foreach (MethodOptionAttribute option in _options)
+                foreach (OptionAttribute option in _options.Concat(_host.Options))
                 {
                     if (option.DefaultValue != null &&
                         !_host.HasOption(option.Name))

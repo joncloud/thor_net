@@ -6,25 +6,25 @@ namespace ThorNet {
 	public class OptionSubstitutor {
 		public void Substitute(
 			IThor host,
-			Dictionary<string, MethodOption> options, 
+			Dictionary<string, Option> options, 
 			List<string> textArgs) {
 		   
 			int i = textArgs.Count;
 			while (--i >= 0) {
 				string textArg = textArgs[i];
-				MethodOption option;
+				Option option;
 				if (TrySubstituteOption(options, textArg, out option)) {
 					textArgs.RemoveAt(i);
-					host.AddOption(option.Alias, option.Value);
+					host.AddOption(option.Name, option.Value);
 				}
 			}
 			
 		}
 		
 		private bool TrySubstituteOption(
-			Dictionary<string, MethodOption> options, 
+			Dictionary<string, Option> options, 
 			string text,
-			out MethodOption option) {
+			out Option option) {
 
 			option = null;
 			if (text.Length > 0 && text[0] == '-') {
