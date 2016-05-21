@@ -12,18 +12,18 @@ namespace ThorNet.UnitTests {
 		[InlineData("--one,--two,--three", "--one=one,--two=two,--three=three", "one,two,three", "", false)]
 		[InlineData("-1", "a,b,c,-1one", "one", "a b c", false)]
 		[InlineData("--one", "--one", "", "", true)]
-		[Theory]
+        [Theory]
 		public void Substitute_Tests(string optionsList, string textArgsList, string valuesList, string remainingArgs, bool allowFlag) {
 			OptionSubstitutor target = new OptionSubstitutor();
 			
 			List<string> textArgs = Utility.ToArray(textArgsList).ToList();
 			
-			Dictionary<string, MethodOption> options = new Dictionary<string, MethodOption>();
+			Dictionary<string, Option> options = new Dictionary<string, Option>();
 			string[] optionsArray = Utility.ToArray(optionsList);
 			for (int i = 0; i < optionsArray.Length; i++) {
 				string option = optionsArray[i];
 				if (!options.ContainsKey(option)) {
-					options.Add(option, new MethodOption(option) { AllowFlag = allowFlag });
+					options.Add(option, new Option(option) { AllowFlag = allowFlag });
 				}
 			}
 			
@@ -31,11 +31,11 @@ namespace ThorNet.UnitTests {
 			target.Substitute(host, options, textArgs);
 			
 			string[] values = valuesList.Split(',');
-			int j = host.Options.Count;
+			int j = host.OptionValues.Count;
 			for (int i = 0; i < values.Length; i++) {
 				string value = values[i];
 				if (value != "") {
-					MethodOption option = host.Options[--j];
+					Option option = host.OptionValues[--j];
 					Assert.Equal(optionsArray[i], option.Alias);
 					Assert.Equal(value, option.Value);
 				}
@@ -47,13 +47,14 @@ namespace ThorNet.UnitTests {
 		
 		public class Helper : IThor {
 			public Helper() {
-				Options = new List<MethodOption>();
+				OptionValues = new List<Option>();
 			}
-			
-			public List<MethodOption> Options { get; }
+
+            public IEnumerable<OptionAttribute> Options => new OptionAttribute[0];
+            public List<Option> OptionValues { get; }
 			
 			public void AddOption(string name, string value) {
-				Options.Add(new MethodOption(name) { Value = value });
+				OptionValues.Add(new Option(name) { Value = value });
 			}
 			public bool HasOption(string name) { return false; }
 		}

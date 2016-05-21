@@ -22,6 +22,13 @@ namespace ThorNet {
         }
         
         internal bool IsSubcommand { get; set; }
+
+        /// <summary>
+        /// Gets all options available to every method.
+        /// </summary>
+        IEnumerable<OptionAttribute> IThor.Options =>
+            GetType().GetTypeInfo().GetCustomAttributes<OptionAttribute>();
+
         public ITerminal Terminal { get; }
         
         /// <summary>
@@ -99,10 +106,10 @@ namespace ThorNet {
                     Terminal.WriteLine();
                     
                     // Print the options.
-                    MethodOptionAttribute[] options = command.Options.ToArray();
+                    OptionAttribute[] options = command.Options.ToArray();
                     if (options.Any()) {
                         Terminal.WriteLine("Options:");
-                        foreach (MethodOptionAttribute option in options) {
+                        foreach (OptionAttribute option in options) {
                             Terminal.WriteLine($"  {option.Alias}, [--{option.Name}={option.Name.ToUpper()}]\t# {option.Description}");
                         }
                         Terminal.WriteLine();

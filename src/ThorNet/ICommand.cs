@@ -24,7 +24,7 @@ namespace ThorNet {
 		/// <summary>
 		/// Gets the available method options.
 		/// </summary>
-		IEnumerable<MethodOptionAttribute> Options { get; }
+		IEnumerable<OptionAttribute> Options { get; }
 		
 		/// <summary>
 		/// Gets the parameters to the method in order.
