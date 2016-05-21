@@ -281,7 +281,7 @@ namespace ThorNet {
                         message.Append(" # ")
                             .Append(option.Description);
 
-                        Truncate(message);
+                        Terminal.Truncate(message);
 
                         Terminal.WriteLine(message.ToString());
                         message.Clear();
@@ -339,7 +339,7 @@ namespace ThorNet {
                 message.Append(" # ")
                     .Append(command.Description);
 
-                Truncate(message);
+                Terminal.Truncate(message);
 
                 Terminal.WriteLine(message.ToString());
                 message.Clear();
@@ -375,18 +375,7 @@ namespace ThorNet {
 
             _subCommands.Add(name ?? typeof(T).Name, () => new T() { IsSubcommand = true });
         }
-
-        void Truncate(StringBuilder sb)
-        {
-            const string suffix = "\b...";
-            if (sb.Length > Terminal.Width)
-            {
-                int delta = sb.Length - Terminal.Width + suffix.Length;
-                sb.Remove(Terminal.Width - suffix.Length, delta);
-                sb.Append(suffix);
-            }
-        }
-
+        
         bool TryGetSubcommand(string name, out Thor thor)
         {
             Func<Thor> factory;

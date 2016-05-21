@@ -4,16 +4,23 @@ using System.Linq;
 
 namespace ThorNet {
 	public class ParameterBinder {
-		public IEnumerable<string> Bind(List<string> textArgs, IParameter[] parameters, out object[] args) {
+		public IEnumerable<BindingResult> Bind(List<string> textArgs, IParameter[] parameters, out object[] args) {
 			args = new object[parameters.Length];
+            var results = new List<BindingResult>();
 			for (int i = 0; i < textArgs.Count; i++) {
 				string textArg = textArgs[i];
 				IParameter parameter = parameters[i];
-				args[i] = TypeHelper.Convert(textArg, parameter.Type);
+                try
+                {
+                    args[i] = TypeHelper.Convert(textArg, parameter.Type);
+                }
+                catch (FormatException)
+                {
+                    results.Add(new BindingResult(parameter.Name, BindingResultType.InvalidFormat));
+                }
 			}
 			
 			// Account for optional arguments.
-			List<string> missingBindings = new List<string>();
 			if (textArgs.Count < args.Length) {
 				for (int i = 0; i < args.Length; i++) {
 					object arg = args[i];
@@ -23,13 +30,13 @@ namespace ThorNet {
 							args[i] = parameter.DefaultValue;
 						}
 						else {
-							missingBindings.Add(parameter.Name);
+							results.Add(new BindingResult(parameter.Name, BindingResultType.Missing));
 						}
 					}
 				}
 			}
 			
-			return missingBindings;
+			return results;
 		}
 	}
 }
