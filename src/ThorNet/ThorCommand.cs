@@ -10,11 +10,13 @@ namespace ThorNet {
 		private readonly ICommand _command;
 		private readonly IThor _host;
 		private readonly MethodOptionAttribute[] _options;
+        private readonly ITerminal _terminal;
 		
-		public ThorCommand(IThor host, ICommand command) {
+		public ThorCommand(IThor host, ICommand command, ITerminal terminal) {
 			_command = command;
 			_host = host;
 			_options = _command.Options.ToArray();
+            _terminal = terminal;
 		}
 		
 		public string Description { get { return _command.Description; } }
@@ -22,7 +24,7 @@ namespace ThorNet {
 		public string Name { get { return _command.Name; } }
 		public IEnumerable<MethodOptionAttribute> Options { get { return _options; } }
 		
-		private object[] BindArguments(List<string> textArgs) {
+		internal object[] BindArguments(List<string> textArgs) {
 			IParameter[] parameters = _command.Parameters.ToArray();
 			
 			// Map the options.
@@ -36,7 +38,9 @@ namespace ThorNet {
 			string[] missingBindings = binder.Bind(textArgs, parameters, out args).ToArray();
 			
 			if (missingBindings.Any()) {
-				throw new AmbiguousMatchException($"Mismatched parameter(s): {string.Join(", ", missingBindings)}.");
+				throw new MissingParameterException(
+                    missingBindings,
+                    $"Mismatched parameter(s): {string.Join(", ", missingBindings)}.");
 			}
 			
 			return args;
@@ -56,23 +60,33 @@ namespace ThorNet {
 		}
 		
 		public void Invoke(string[] args) {
-			object[] arguments = BindArguments(args.ToList());
-			
-			// Provide default values for options..
-			foreach (MethodOptionAttribute option in _options) {
-				if (option.DefaultValue != null &&
-					!_host.HasOption(option.Name)) {
-					_host.AddOption(option.Name, option.DefaultValue);
-				}
-			}
-			
-			object result = _command.Invoke(_host, arguments);
-		   
-			// If the result is a task, then make sure to wait for it to complete.  
-			if (typeof(Task).GetTypeInfo().IsAssignableFrom(_command.ReturnType)) {
-				Task task = (Task)result;
-				task.Wait();
-			}
-		}
+            try
+            {
+                object[] arguments = BindArguments(args.ToList());
+
+                // Provide default values for options..
+                foreach (MethodOptionAttribute option in _options)
+                {
+                    if (option.DefaultValue != null &&
+                        !_host.HasOption(option.Name))
+                    {
+                        _host.AddOption(option.Name, option.DefaultValue);
+                    }
+                }
+
+                object result = _command.Invoke(_host, arguments);
+
+                // If the result is a task, then make sure to wait for it to complete.  
+                if (typeof(Task).GetTypeInfo().IsAssignableFrom(_command.ReturnType))
+                {
+                    Task task = (Task)result;
+                    task.Wait();
+                }
+            }
+            catch (MissingParameterException)
+            {
+                _terminal.WriteLine($"\"{Name}\" was called incorrectly. Call as \"{Example}\"");
+            }
+        }
 	}
 }

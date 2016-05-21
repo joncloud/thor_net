@@ -68,7 +68,7 @@ If you try to run it without the `name` argument, then it will print an error me
 
 ```powershell
 PS C:\MyCLI> dotnet MyCLI.dll Hello
-TODO
+"Hello" was called incorrectly. Call as "Hello NAME"
 ```
 
 Use C#'s optional parameters to indicate whether a parameter is required:

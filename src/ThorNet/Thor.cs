@@ -6,13 +6,13 @@ using System.Reflection;
 namespace ThorNet {
     public class Thor : IThor {
         
-        private Dictionary<string, ThorCommand> _commands;
+        internal readonly Dictionary<string, ThorCommand> Commands;
         private Dictionary<string, List<string>> _options;
         private Dictionary<string, Func<Thor>> _subCommands;
         
         public Thor() 
             : this(new ConsoleWrapper()) {
-            _commands = LoadCommands();
+            Commands = LoadCommands();
             _options = new Dictionary<string, List<string>>();
             _subCommands = new Dictionary<string, Func<Thor>>();
         }
@@ -73,7 +73,7 @@ namespace ThorNet {
             
             // Print all of the commands.
             if (commandName == null) {
-                foreach (ThorCommand command in _commands.OrderBy(p => p.Key).Select(p => p.Value)) {
+                foreach (ThorCommand command in Commands.OrderBy(p => p.Key).Select(p => p.Value)) {
                     if (IsSubcommand && command.Name == nameof(help)) { continue; }
 
                     string message = $"  {name} {command.Example}\t# {command.Description}";
@@ -93,7 +93,7 @@ namespace ThorNet {
             // Print a specific command.
             else {
                 ThorCommand command;
-                if (_commands.TryGetValue(commandName, out command)) {
+                if (Commands.TryGetValue(commandName, out command)) {
                     Terminal.WriteLine("Usage:");
                     Terminal.WriteLine($" {name} {command.Example}");
                     Terminal.WriteLine();
@@ -132,13 +132,13 @@ namespace ThorNet {
         /// <param name="args">The arguments to provide to the command.</param>
         internal void Invoke(string commandName, string[] args) {
             // Show warnings for any public methods that don't have examples defined.
-            foreach (string invalid in _commands.Where(p => p.Value.Example == null)
+            foreach (string invalid in Commands.Where(p => p.Value.Example == null)
                                                 .Select(p => p.Value.Name)) {
                 Terminal.WriteLine($"[WARNING] Attempted to create command \"{invalid}\" without usage or description. Add Desc if you want this method to be available as command, or declare it as a non-public member.");   
             }
             
             ThorCommand command;
-            if (_commands.TryGetValue(commandName, out command)) {
+            if (Commands.TryGetValue(commandName, out command)) {
                 command.Invoke(args);
             }
             else {
@@ -165,7 +165,7 @@ namespace ThorNet {
             return type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
                         .Where(m => typeof(Thor).GetTypeInfo().IsAssignableFrom(m.DeclaringType) &&
                                     !m.IsSpecialName)
-                        .Select(m => new ThorCommand((IThor)this, new MethodInfoWrapper(m)))
+                        .Select(m => new ThorCommand((IThor)this, new MethodInfoWrapper(m), Terminal))
                         .ToDictionary(c => c.Name);
         }
         
@@ -276,7 +276,7 @@ namespace ThorNet {
             where T : Thor, new()
         {
             name = name ?? typeof(T).Name;
-            if (_commands.ContainsKey(name))
+            if (Commands.ContainsKey(name))
             {
                 throw new ArgumentOutOfRangeException(nameof(name), $"{name} is a command, and cannot also be a subcommand.");
             }
