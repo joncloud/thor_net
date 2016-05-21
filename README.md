@@ -118,7 +118,7 @@ class Program : Thor {
 Here is how to specify options from the command line:
 
 ```powershell
-PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan --from Thor
+PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan --from=Thor
 From: Thor
 Hello Jonathan
 PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan -fThor
@@ -141,7 +141,7 @@ class Program : Thor {
         if (from != null) { output.AppendLine($"From: {from}"); }
         output.AppendLine($"Hello {name}");
 
-        Console.WriteLine(Flag("yell") ? output.ToString().ToUpper() : output.ToString());
+        Console.Write(Flag("yell") ? output.ToString().ToUpper() : output.ToString());
     }
 }
 ```
@@ -149,10 +149,10 @@ class Program : Thor {
 Flags are just options without a value:
 
 ```powershell
-PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan --yell --from "Thor"
+PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan --yell --from="Thor"
 FROM: THOR
 HELLO JONATHAN
-PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan -y --from "Thor"
+PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan -y --from="Thor"
 FROM: THOR
 HELLO JONATHAN
 ```
@@ -216,8 +216,8 @@ class Program : Thor {
         output.AppendLine($"Hello {name}");
 
         int repeats = Option("repeat", defaultValue: () => 1);
-        while (--repeats >= 0) {}
-            Console.WriteLine(Flag("yell") ? output.ToString().ToUpper() : output.ToString());
+        while (--repeats >= 0) {
+            Console.Write(Flag("yell") ? output.ToString().ToUpper() : output.ToString());
         }
     }
 }
@@ -226,10 +226,10 @@ class Program : Thor {
 Again, the options are the same:
 
 ```powershell
-PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan --yell --from "Thor" --repeat 1
+PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan --yell --from="Thor" --repeat=1
 FROM: THOR
 HELLO JONATHAN
-PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan --yell --from "Thor" --repeat 2
+PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan --yell --from="Thor" --repeat=2
 FROM: THOR
 HELLO JONATHAN
 FROM: THOR
@@ -284,3 +284,8 @@ PS C:\MyCLI> dotnet MyCLI.dll
   dotnet MyCLI.dll messages List   # ...
   dotnet MyCLI.dll messages Remove # ...
 ```
+
+### And More
+Check out the [sample][] project for more.
+
+[sample]: src/ThorNet.Sample

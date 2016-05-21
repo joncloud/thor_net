@@ -3,9 +3,6 @@
   "buildOptions": {
     "emitEntryPoint": true
   },
-  "commands": {
-    "dice": "ThorNet.Terminal"
-  },
   "dependencies": {
     "Microsoft.NETCore.App": {
       "type": "platform",
@@ -17,9 +14,6 @@
     "netcoreapp1.0": {
       "imports": "dnxcore50"
     }
-  },
-  "tooling": {
-    "defaultNamespace": "ThorNet.Terminal"
   },
   "version": "0.3.0"
 }
