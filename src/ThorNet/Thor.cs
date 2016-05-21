@@ -59,12 +59,8 @@ namespace ThorNet {
         /// <summary>
         /// Gets the name of the package for display in the <see cref="help(string)"/> method.
         /// </summary>
-        protected virtual string GetPackageName()
-        {
-            string name = GetType().GetTypeInfo().Assembly.GetName().Name;
-
-            return $"dotnet {name}.dll";
-        }
+        protected virtual string GetPackageName() =>
+            GetType().GetTypeInfo().Assembly.GetName().Name;
 
         /// <summary>
         /// Determines if the option has already been specified.
@@ -74,94 +70,23 @@ namespace ThorNet {
         bool IThor.HasOption(string name) {
             return _options.ContainsKey(name);
         }
-        
-        [Desc("help [COMMAND]", "Describe available commands or one specific command")]
+
+        [Desc("help COMMAND", "Describe available commands or one specific command")]
         public void help(string commandName = null, string subcommandName = null) {
-            string name = GetPackageName();
-            
+
             // Print all of the commands.
-            if (commandName == null) {
-
-                var commands = _subCommands.Values
-                    .Select(factory => factory())
-                    .SelectMany(t => t.Commands)
-                    .Concat(Commands)
-                    .Select(p => p.Value)
-                    .ToArray();
-
-                const string prefix = "  ";
-                int maxExample = commands.Max(c => c.Example.Length) + prefix.Length;
-
-                StringBuilder message = new StringBuilder();
-
-                const string suffix = "\b...";
-                foreach (ThorCommand command in commands.OrderBy(c => c.Example)) {
-                    if (IsSubcommand && command.Name == nameof(help)) { continue; }
-
-                    // Create a message like '  {example}  # {description}'
-                    message.Append(prefix)
-                        .Append(command.Example);
-
-                    if (message.Length < maxExample)
-                    {
-                        int delta = maxExample - message.Length;
-                        message.Append(' ', delta);
-                    }
-
-                    message.Append(" # ")
-                        .Append(command.Description);
-
-                    if (message.Length > Terminal.Width)
-                    {
-                        int delta = message.Length - Terminal.Width + suffix.Length;
-                        message.Remove(Terminal.Width - suffix.Length, delta);
-                        message.Append(suffix);
-                    }
-
-                    Terminal.WriteLine(message.ToString());
-                    message.Clear();
-                }
+            if (commandName == null)
+            {
+                PrintSummaryHelp();
             }
-            
-            // Print a specific command.
-            else {
-                ThorCommand command;
-                if (Commands.TryGetValue(commandName, out command)) {
-                    Terminal.WriteLine("Usage:");
-                    Terminal.WriteLine($" {name} {command.Example}");
-                    Terminal.WriteLine();
-                    
-                    // Print the options.
-                    OptionAttribute[] options = command.Options.ToArray();
-                    if (options.Any()) {
-                        Terminal.WriteLine("Options:");
-                        foreach (OptionAttribute option in options) {
-                            string complete;
-                            if (option.Flag) { complete = $"--{option.Name}"; }
-                            else { complete = $"--{option.Name}={option.Name.ToUpper()}"; }
 
-                            Terminal.WriteLine($"  {option.Alias}, [{complete}]\t# {option.Description}");
-                        }
-                        Terminal.WriteLine();
-                    }
-                    
-                    Terminal.WriteLine(command.Description);
-                }
-                else
-                {
-                    Thor subcommand;
-                    if (TryGetSubcommand(commandName, out subcommand))
-                    {
-                        subcommand.help(subcommandName);
-                    }
-                    else
-                    {
-                        Terminal.WriteLine($"Could not find command \"{commandName}\".");
-                    }
-                }
+            // Print a specific command.
+            else
+            {
+                PrintCommandHelp(commandName, subcommandName);
             }
         }
-        
+
         /// <summary>
         /// Invokes a command by name with the given arguments.
         /// </summary>
@@ -291,6 +216,136 @@ namespace ThorNet {
             return commandName;
         }
 
+        void PrintCommandHelp(string commandName, string subcommandName)
+        {
+            // Handle commands.
+            ThorCommand command;
+            if (Commands.TryGetValue(commandName, out command))
+            {
+                Terminal.WriteLine("Usage:");
+                string name = GetPackageName();
+                Terminal.WriteLine($"  {name} {command.Example}");
+                Terminal.WriteLine();
+
+                // Print the options.
+                OptionAttribute[] options = command.Options
+                    .OrderBy(o => o.Alias)
+                    .ThenBy(o => o.Name)
+                    .ToArray();
+                if (options.Any())
+                {
+                    Terminal.WriteLine("Options:");
+
+                    const string prefix = "  ";
+                    const string separator = ", ";
+                    const string namePrefix = "--";
+                    const string nameSeparator = "=";
+                    const string openBracket = "[";
+                    const string closeBracket = "]";
+                    int max = options.Max(o =>
+                        prefix.Length
+                            + o.Alias.Length
+                            + separator.Length
+                            + openBracket.Length
+                            + namePrefix.Length
+                            + o.Name.Length
+                            + (o.Flag ? nameSeparator.Length + o.Name.Length : 0)
+                            + closeBracket.Length);
+
+                    StringBuilder message = new StringBuilder();
+
+                    foreach (OptionAttribute option in options)
+                    {
+
+                        message.Append(prefix)
+                            .Append(option.Alias)
+                            .Append(separator)
+                            .Append(openBracket)
+                            .Append(namePrefix)
+                            .Append(option.Name);
+
+                        if (!option.Flag)
+                        {
+                            message.Append(nameSeparator)
+                                .Append(option.Name.ToUpper());
+                        }
+
+                        message.Append(closeBracket);
+
+                        if (message.Length < max)
+                        {
+                            int delta = max - message.Length;
+                            message.Append(' ', delta);
+                        }
+
+                        message.Append(" # ")
+                            .Append(option.Description);
+
+                        Truncate(message);
+
+                        Terminal.WriteLine(message.ToString());
+                        message.Clear();
+                    }
+                    Terminal.WriteLine();
+                }
+
+                Terminal.WriteLine(command.Description);
+            }
+            else
+            {
+                // Handle subcommands.
+                Thor subcommand;
+                if (TryGetSubcommand(commandName, out subcommand))
+                {
+                    subcommand.help(subcommandName);
+                }
+                else
+                {
+                    Terminal.WriteLine($"Could not find command \"{commandName}\".");
+                }
+            }
+        }
+
+        void PrintSummaryHelp()
+        {
+            Terminal.WriteLine("Tasks:");
+
+            var commands = _subCommands.Values
+                .Select(factory => factory())
+                .SelectMany(t => t.Commands)
+                .Concat(Commands)
+                .Select(p => p.Value)
+                .ToArray();
+
+            const string prefix = "  ";
+            int maxExample = commands.Max(c => c.Example.Length) + prefix.Length;
+
+            StringBuilder message = new StringBuilder();
+
+            foreach (ThorCommand command in commands.OrderBy(c => c.Example))
+            {
+                if (IsSubcommand && command.Name == nameof(help)) { continue; }
+
+                // Create a message like '  {example}  # {description}'
+                message.Append(prefix)
+                    .Append(command.Example);
+
+                if (message.Length < maxExample)
+                {
+                    int delta = maxExample - message.Length;
+                    message.Append(' ', delta);
+                }
+
+                message.Append(" # ")
+                    .Append(command.Description);
+
+                Truncate(message);
+
+                Terminal.WriteLine(message.ToString());
+                message.Clear();
+            }
+        }
+
         /// <summary>
         /// Starts the thor program.
         /// </summary>
@@ -319,6 +374,17 @@ namespace ThorNet {
             }
 
             _subCommands.Add(name ?? typeof(T).Name, () => new T() { IsSubcommand = true });
+        }
+
+        void Truncate(StringBuilder sb)
+        {
+            const string suffix = "\b...";
+            if (sb.Length > Terminal.Width)
+            {
+                int delta = sb.Length - Terminal.Width + suffix.Length;
+                sb.Remove(Terminal.Width - suffix.Length, delta);
+                sb.Append(suffix);
+            }
         }
 
         bool TryGetSubcommand(string name, out Thor thor)
