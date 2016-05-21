@@ -93,8 +93,8 @@ namespace ThorNet.UnitTests {
 			[Desc("Sit", null)]
 			public void Void_WithExample() { }
 			
-			[MethodOption("alpha", "a", "beginning")]
-			[MethodOption("omega", "o", "ending")]
+			[Option("alpha", "a", "beginning")]
+			[Option("omega", "o", "ending")]
 			public void Void_WithMethodOption() { }
 			public void Void_WithParametersX(int x) { }
 			public void Void_WithParametersXY(int x, int y) { }

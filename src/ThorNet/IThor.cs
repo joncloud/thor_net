@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace ThorNet {
 	
@@ -7,6 +8,11 @@ namespace ThorNet {
 	/// </summary>
 	public interface IThor {
 		
+        /// <summary>
+        /// Gets all options available to every method.
+        /// </summary>
+        IEnumerable<OptionAttribute> Options { get; }
+
 		/// <summary>
 		/// Adds an option's value by name.
 		/// </summary>

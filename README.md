@@ -100,13 +100,13 @@ Not currently implemented.
 
 ### Options and Flags
 
-Use the `MethodOption` attribute in order to specify options and flags:
+Use the `Option` attribute in order to specify options and flags:
 
 ```csharp
 class Program : Thor {
 
     [Desc("Hello NAME", "say hello to NAME")]
-    [MethodOption("from", "f", "who the message is from")]
+    [Option("from", "f", "who the message is from")]
     public void Hello(string name) {
         string from = Option("from");
         if (from != null) { Console.WriteLine($"From: {from}"); }
@@ -132,8 +132,8 @@ For flags, specify the `Flag` property, and then check `Flag` for a boolean resu
 class Program : Thor {
 
     [Desc("Hello NAME", "say hello to NAME")]
-    [MethodOption("from", "f", "who the message is from")]
-    [MethodOption("yell", "y", "yells the message", Flag = true)]
+    [Option("from", "f", "who the message is from")]
+    [Option("yell", "y", "yells the message", Flag = true)]
     public void Hello(string name) {
         StringBuilder output = new StringBuilder();
 
@@ -157,14 +157,49 @@ FROM: THOR
 HELLO JONATHAN
 ```
 
-You can also specify additional properties on `MethodOption`.
+You can also specify additional properties on `Option`.
 
 * DefaultValue - The default value of the option if none is specified from the command line.
 * Flag - Indicates when parsing arguments that no value should be expected.
 
 ### Class Options
 
-Not currently implemented.
+If you need to use options across multiple commands, then declare `Option` on the class level.  It is used the same way that it is used on a method, but the values become available in any method on the class.
+
+```csharp
+[Option("verbose", "v", "prints debugging information", Flag = true)]
+public class Program : Thor {
+    [Desc("goodbye", "say goodbye to the world")]
+    public void Goodbye() {
+        bool verbose = Flag("verbose");
+
+        if (verbose) { Console.WriteLine("> saying goodbye"); }
+        Console.WriteLine("Goodbye World");
+        if (verbose) { Console.WriteLine("> done saying goodbye"); }
+    }
+
+    [Desc("Hello NAME", "say hello to NAME")]
+    [Option("from", "f", "who the message is from")]
+    [Option("repeat", "r", "repeats the message")]
+    [Option("yell", "y", "yells the message", Flag = true)]
+    public void Hello(string name)
+    {
+        bool verbose = Flag("verbose");
+        StringBuilder output = new StringBuilder();
+
+        if (verbose) { Console.WriteLine("> saying hello"); }
+
+        string from = Option("from");
+        if (from != null) { output.AppendLine($"From: {from}"); }
+        output.AppendLine($"Hello {name}");
+
+        int repeats = Option("repeat", defaultValue: () => 1);
+        Console.Write(Flag("yell") ? output.ToString().ToUpper() : output.ToString());
+
+        if (verbose) { Console.WriteLine("> done saying hello"); }
+    }
+}
+```
 
 ### Type Safety
 
@@ -205,9 +240,9 @@ Options also support types too:
 class Program : Thor {
 
     [Desc("Hello NAME", "say hello to NAME")]
-    [MethodOption("from", "f", "who the message is from")]
-    [MethodOption("repeat", "r", "repeats the message")]
-    [MethodOption("yell", "y", "yells the message", Flag = true)]
+    [Option("from", "f", "who the message is from")]
+    [Option("repeat", "r", "repeats the message")]
+    [Option("yell", "y", "yells the message", Flag = true)]
     public void Hello(string name) {
         StringBuilder output = new StringBuilder();
 
@@ -265,9 +300,9 @@ class Program : Thor {
     }
 
     [Desc("Hello NAME", "say hello to NAME")]
-    [MethodOption("from", "f", "who the message is from")]
-    [MethodOption("repeat", "r", "repeats the message")]
-    [MethodOption("yell", "y", "yells the message", Flag = true)]
+    [Option("from", "f", "who the message is from")]
+    [Option("repeat", "r", "repeats the message")]
+    [Option("yell", "y", "yells the message", Flag = true)]
     public void Hello(string name) {
         // ...
     }
