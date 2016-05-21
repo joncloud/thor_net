@@ -103,7 +103,11 @@ namespace ThorNet {
                     if (options.Any()) {
                         Terminal.WriteLine("Options:");
                         foreach (MethodOptionAttribute option in options) {
-                            Terminal.WriteLine($"  {option.Alias}, [--{option.Name}={option.Name.ToUpper()}]\t# {option.Description}");
+                            string complete;
+                            if (option.Flag) { complete = $"--{option.Name}"; }
+                            else { complete = $"--{option.Name}={option.Name.ToUpper()}"; }
+
+                            Terminal.WriteLine($"  {option.Alias}, [{complete}]\t# {option.Description}");
                         }
                         Terminal.WriteLine();
                     }
