@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace ThorNet {
     public class Thor : IThor {
@@ -80,20 +81,45 @@ namespace ThorNet {
             
             // Print all of the commands.
             if (commandName == null) {
-                foreach (ThorCommand command in Commands.OrderBy(p => p.Key).Select(p => p.Value)) {
+
+                var commands = _subCommands.Values
+                    .Select(factory => factory())
+                    .SelectMany(t => t.Commands)
+                    .Concat(Commands)
+                    .Select(p => p.Value)
+                    .ToArray();
+
+                const string prefix = "  ";
+                int maxExample = commands.Max(c => c.Example.Length) + prefix.Length;
+
+                StringBuilder message = new StringBuilder();
+
+                const string suffix = "\b...";
+                foreach (ThorCommand command in commands.OrderBy(c => c.Example)) {
                     if (IsSubcommand && command.Name == nameof(help)) { continue; }
 
-                    string message = $"  {name} {command.Example}\t# {command.Description}";
-                    if (message.Length > Terminal.Width) {
-                        message = message.Substring(0, Terminal.Width - 9);
-                        message += "...";
-                    }
-                    Terminal.WriteLine(message);
-                }
+                    // Create a message like '  {example}  # {description}'
+                    message.Append(prefix)
+                        .Append(command.Example);
 
-                foreach (var thor in _subCommands.Values.Select(factory => factory()))
-                {
-                    thor.help();
+                    if (message.Length < maxExample)
+                    {
+                        int delta = maxExample - message.Length;
+                        message.Append(' ', delta);
+                    }
+
+                    message.Append(" # ")
+                        .Append(command.Description);
+
+                    if (message.Length > Terminal.Width)
+                    {
+                        int delta = message.Length - Terminal.Width + suffix.Length;
+                        message.Remove(Terminal.Width - suffix.Length, delta);
+                        message.Append(suffix);
+                    }
+
+                    Terminal.WriteLine(message.ToString());
+                    message.Clear();
                 }
             }
             
