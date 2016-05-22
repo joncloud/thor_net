@@ -170,7 +170,7 @@ If you need to use options across multiple commands, then declare `Option` on th
 ```csharp
 [Option("verbose", "v", "prints debugging information", Flag = true)]
 public class Program : Thor {
-    [Desc("goodbye", "say goodbye to the world")]
+    [Desc("Goodbye", "say goodbye to the world")]
     public void Goodbye() {
         bool verbose = Flag("verbose");
 
@@ -209,7 +209,7 @@ Arguments can be any type that is convertable using `Convert.ChangeType` or it i
 ```csharp
 class Program : Thor {
 
-    [Desc("count TO", "count up to TO")]
+    [Desc("Count TO", "count up to TO")]
     public void Count(int to) {
         for (int i = 1; i <= to; i++) {
             Console.WriteLine(i);
@@ -320,6 +320,22 @@ PS C:\MyCLI> dotnet MyCLI.dll
   dotnet MyCLI.dll messages Add    # ...
   dotnet MyCLI.dll messages List   # ...
   dotnet MyCLI.dll messages Remove # ...
+```
+
+### Task async/await
+Using async/await Tasks are supported too:
+
+```csharp
+class Program : Thor {
+    [Desc("Delay TIME", "delays in milliseconds")]
+    public async Task Delay(int time) {
+        bool verbose = Flag("verbose");
+
+        if (verbose) { Console.WriteLine($"> delaying {time}ms"); }
+        await Task.Delay(time);
+        if (verbose) { Console.WriteLine($"> done delaying {time}ms"); }
+    }
+}
 ```
 
 ### And More
