@@ -22,6 +22,7 @@ namespace ThorNet
 		
 		public string Description { get { return _command.Description; } }
 		public string Example { get { return _command.Example; } }
+        public string LongDescription => _command.LongDescription;
 		public string Name { get { return _command.Name; } }
 		public IEnumerable<OptionAttribute> Options { get { return _options; } }
 		

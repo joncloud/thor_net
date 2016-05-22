@@ -15,6 +15,11 @@ namespace ThorNet {
 		/// Gets an example of how to use the command.
 		/// </summary>
 		string Example { get; }
+
+        /// <summary>
+        /// Gets the long description of the command.
+        /// </summary>
+        string LongDescription { get; }
 		
 		/// <summary>
 		/// Gets the name of the command.

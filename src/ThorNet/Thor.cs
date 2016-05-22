@@ -224,6 +224,46 @@ namespace ThorNet {
             return commandName;
         }
 
+        IEnumerable<string> GetLongDescriptionLines(string description)
+        {
+            var lines = description.Split(new[] { "\r\n" }, StringSplitOptions.None);
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line) && sb.Length > 0)
+                {
+                    Terminal.Wrap(sb);
+                    sb.AppendLine();
+                    yield return sb.ToString();
+                    sb.Clear();
+                }
+
+                else
+                {
+                    string trimmed = line.Trim();
+                    if (trimmed.Length > 0 && trimmed[0] == '\x5')
+                    {
+                        sb.AppendLine()
+                            .Append(trimmed.Substring(1));
+                    }
+                    else
+                    {
+                        if (sb.Length > 0) { sb.Append(" "); }
+                        sb.Append(trimmed);
+                    }
+                }
+            }
+
+            if (sb.Length > 0)
+            {
+                Terminal.Wrap(sb);
+                sb.AppendLine();
+                yield return sb.ToString();
+                sb.Clear();
+            }
+        }
+
         int PrintCommandHelp(string commandName, string subcommandName)
         {
             // Handle commands.
@@ -298,6 +338,15 @@ namespace ThorNet {
                 }
 
                 Terminal.WriteLine(command.Description);
+
+                if (!string.IsNullOrEmpty(command.LongDescription))
+                {
+                    Terminal.WriteLine();
+                    foreach (string line in GetLongDescriptionLines(command.LongDescription))
+                    {
+                        Terminal.WriteLine(line);
+                    }
+                }
             }
             else
             {

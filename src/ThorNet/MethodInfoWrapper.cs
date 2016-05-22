@@ -16,6 +16,9 @@ namespace ThorNet {
 			DescAttribute desc = _method.GetCustomAttribute<DescAttribute>();
 			Description = desc?.Description ?? "";
 			Example = desc?.Example ?? "";
+
+            var longDesc = _method.GetCustomAttribute<LongDescAttribute>();
+            LongDescription = longDesc?.Description ?? "";
 		}
 		
 		/// <summary>
@@ -27,11 +30,16 @@ namespace ThorNet {
 		/// Gets an example of how to use the command.
 		/// </summary>
 		public string Example { get; }
-        
-		/// <summary>
-		/// Gets the name of the command.
-		/// </summary>
-		public string Name { get { return _method.Name; } }
+
+        /// <summary>
+        /// Gets the long description of the command.
+        /// </summary>
+        public string LongDescription { get; }
+
+        /// <summary>
+        /// Gets the name of the command.
+        /// </summary>
+        public string Name { get { return _method.Name; } }
         
 		/// <summary>
 		/// Gets the available method options.
