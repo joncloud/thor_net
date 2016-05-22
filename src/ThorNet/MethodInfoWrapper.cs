@@ -14,8 +14,8 @@ namespace ThorNet {
 			_method = method;
 			
 			DescAttribute desc = _method.GetCustomAttribute<DescAttribute>();
-			Description = desc?.Description;
-			Example = desc?.Example;
+			Description = desc?.Description ?? "";
+			Example = desc?.Example ?? "";
 		}
 		
 		/// <summary>

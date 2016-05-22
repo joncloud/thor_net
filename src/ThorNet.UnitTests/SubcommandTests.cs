@@ -42,6 +42,7 @@ namespace ThorNet.UnitTests
         public class TriggerTarget : Thor
         {
             public TriggerTarget()
+                : base(NullTerminal.Instance)
             {
                 Subcommand<Trigger>();
             }
@@ -49,6 +50,11 @@ namespace ThorNet.UnitTests
 
         public class Trigger : Thor
         {
+            public Trigger()
+                : base(NullTerminal.Instance)
+            {
+            }
+
             public static int Counter => _counter;
             static int _counter;
 
