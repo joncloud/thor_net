@@ -12,7 +12,7 @@ namespace ThorNet.UnitTests
         [InlineData(nameof(Target.Parsing), BindingResultType.InvalidFormat, "123,b", "b")]
         [InlineData(nameof(Target.Parsing), BindingResultType.InvalidFormat, "a,2016-05-21", "a")]
         [Theory]
-        public void BindArguments_Throws(string commandName, BindingResultType type, string argsList, string expectedMissing)
+        public void BindArguments_Throws(string commandName, int type, string argsList, string expectedMissing)
         {
             var args = new List<string>(argsList.Split(','));
             var target = new Target();
@@ -27,7 +27,7 @@ namespace ThorNet.UnitTests
             string actualMissing = string.Join(",", ex.BindingResults.Select(r => r.Name));
             Assert.Equal(expectedMissing, actualMissing);
             Assert.True(
-                ex.BindingResults.All(r => r.Type == type), 
+                ex.BindingResults.All(r => r.Type == (BindingResultType)type), 
                 "Unexpected binding result types.");
         }
 

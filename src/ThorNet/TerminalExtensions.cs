@@ -3,7 +3,7 @@ using System.Text;
 
 namespace ThorNet
 {
-    public static class TerminalExtensions
+    internal static class TerminalExtensions
     {
         public static void Truncate(this ITerminal terminal, StringBuilder sb)
         {

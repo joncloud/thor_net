@@ -8,12 +8,12 @@
       "type": "platform",
       "version": "1.0.0-rc2-3002702"
     },
-    "ThorNet": "0.4.0"
+    "ThorNet": "1.0.0"
   },
   "frameworks": {
     "netcoreapp1.0": {
       "imports": "dnxcore50"
     }
   },
-  "version": "0.4.0"
+  "version": "1.0.0"
 }

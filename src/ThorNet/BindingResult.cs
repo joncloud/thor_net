@@ -1,6 +1,6 @@
 ﻿namespace ThorNet
 {
-    public class BindingResult
+    internal class BindingResult
     {
         public BindingResult(string name, BindingResultType type)
         {

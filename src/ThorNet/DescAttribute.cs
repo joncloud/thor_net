@@ -1,24 +1,30 @@
 using System;
 
-namespace ThorNet {
+namespace ThorNet
+{
     /// <summary>
     /// Describes a command.
     /// </summary>
 	[AttributeUsage(AttributeTargets.Method)]
-	public class DescAttribute : Attribute {
-		public DescAttribute(string example, string description) {
-			Description = description;
-			Example = example;
-		}
-		
+    public class DescAttribute : Attribute
+    {
+        /// <summary>
+        /// Creates a new description attribute.
+        /// </summary>
+        public DescAttribute(string example, string description)
+        {
+            Description = description;
+            Example = example;
+        }
+
         /// <summary>
         /// Gets the description for the command.
         /// </summary>
-		public string Description { get; }
-        
+        public string Description { get; }
+
         /// <summary>
         /// Gets the brief example of calling the command.
         /// </summary>
-		public string Example { get; }
-	}
+        public string Example { get; }
+    }
 }
