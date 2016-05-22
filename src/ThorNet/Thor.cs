@@ -109,7 +109,6 @@ namespace ThorNet {
                     Terminal.WriteLine($"[ERROR] {ex.Message}");
                     return 1;
                 }
-                return 0;
             }
             else {
                 Thor subcommand;
