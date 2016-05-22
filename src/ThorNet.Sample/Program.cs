@@ -30,7 +30,10 @@ namespace ThorNet.Sample
             await Task.Delay(time);
             if (verbose) { Console.WriteLine($"> done delaying {time}ms"); }
         }
-        
+
+        [Desc("Exit CODE", "stops the process with the specified exit code")]
+        public int Exit(int code) => code;
+
         [Desc("Goodbye", "say goodbye to the world")]
         public void Goodbye()
         {
@@ -66,9 +69,9 @@ namespace ThorNet.Sample
             if (verbose) { Console.WriteLine("> done saying hello"); }
         }
 
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
-            Start<Program>(args);
+            return Start<Program>(args);
         }
     }
 }

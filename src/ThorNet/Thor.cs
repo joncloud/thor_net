@@ -72,18 +72,19 @@ namespace ThorNet {
         }
 
         [Desc("help COMMAND", "Describe available commands or one specific command")]
-        public void help(string commandName = null, string subcommandName = null) {
+        public int help(string commandName = null, string subcommandName = null) {
 
             // Print all of the commands.
             if (commandName == null)
             {
                 PrintSummaryHelp();
+                return 0;
             }
 
             // Print a specific command.
             else
             {
-                PrintCommandHelp(commandName, subcommandName);
+                return PrintCommandHelp(commandName, subcommandName);
             }
         }
 
@@ -92,7 +93,8 @@ namespace ThorNet {
         /// </summary>
         /// <param name="commandName">The name of the command to invoke.</param>
         /// <param name="args">The arguments to provide to the command.</param>
-        internal void Invoke(string commandName, string[] args) {
+        /// <returns>The exit code to return to the command prompt.</returns>
+        internal int Invoke(string commandName, string[] args) {
             // Show warnings for any public methods that don't have examples defined.
             foreach (string invalid in Commands.Where(p => p.Value.Example == null)
                                                 .Select(p => p.Value.Name)) {
@@ -101,19 +103,26 @@ namespace ThorNet {
             
             ThorCommand command;
             if (Commands.TryGetValue(commandName, out command)) {
-                command.Invoke(args);
+                try { return command.Invoke(args); }
+                catch (Exception ex)
+                {
+                    Terminal.WriteLine($"[ERROR] {ex.Message}");
+                    return 1;
+                }
+                return 0;
             }
             else {
                 Thor subcommand;
                 if (TryGetSubcommand(commandName, out subcommand))
                 {
                     commandName = PrepareInvocationArguments(ref args);
-                    subcommand.Invoke(commandName, args);
+                    return subcommand.Invoke(commandName, args);
                 }
                 
                 else
                 {
                     Terminal.WriteLine($"Could not find command \"{commandName}\".");
+                    return 1;
                 }
             }
         }
@@ -216,7 +225,7 @@ namespace ThorNet {
             return commandName;
         }
 
-        void PrintCommandHelp(string commandName, string subcommandName)
+        int PrintCommandHelp(string commandName, string subcommandName)
         {
             // Handle commands.
             ThorCommand command;
@@ -297,13 +306,16 @@ namespace ThorNet {
                 Thor subcommand;
                 if (TryGetSubcommand(commandName, out subcommand))
                 {
-                    subcommand.help(subcommandName);
+                    return subcommand.help(subcommandName);
                 }
                 else
                 {
                     Terminal.WriteLine($"Could not find command \"{commandName}\".");
+                    return 1;
                 }
             }
+
+            return 0;
         }
 
         void PrintSummaryHelp()
@@ -350,13 +362,14 @@ namespace ThorNet {
         /// Starts the thor program.
         /// </summary>
         /// <param name="args">The arguments given from the command line.</param>
-        public static void Start<T>(string[] args)
+        /// <returns>The exit code to return to the command prompt.</returns>
+        public static int Start<T>(string[] args)
             where T : Thor, new() {
 
             string commandName = PrepareInvocationArguments(ref args);
             
             T thor = new T();
-            thor.Invoke(commandName, args);
+            return thor.Invoke(commandName, args);
         }
 
         /// <summary>

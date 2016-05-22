@@ -60,7 +60,7 @@ namespace ThorNet
 			 .ToDictionary(x => x.Key, x => x.Option);
 		}
 		
-		public void Invoke(string[] args) {
+		public int Invoke(string[] args) {
             try
             {
                 object[] arguments = BindArguments(args.ToList());
@@ -82,7 +82,19 @@ namespace ThorNet
                 {
                     Task task = (Task)result;
                     task.Wait();
+
+                    var intTask = task as Task<int>;
+                    if (intTask != null)
+                    {
+                        return intTask.Result;
+                    }
                 }
+                else if (typeof(int).GetTypeInfo().IsAssignableFrom(_command.ReturnType))
+                {
+                    return (int)result;
+                }
+
+                return 0;
             }
             catch (MismatchedBindingException ex)
             {
@@ -120,6 +132,8 @@ namespace ThorNet
                     _terminal.WriteLine(message.ToString());
                     message.Clear();
                 }
+
+                return 1;
             }
         }
 	}
