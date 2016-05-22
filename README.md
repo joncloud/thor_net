@@ -44,8 +44,8 @@ class Program : Thor {
 In the static `Main` method, call `Start<Program>(args)` to parse the arguments and start the program.
 
 ```csharp
-static void Main(string[] args) {
-    Start<Program>(args);
+static int Main(string[] args) {
+    return Start<Program>(args);
 }
 ```
 
@@ -93,6 +93,34 @@ Hello Jonathan
 PS C:\MyCLI> dotnet MyCLI.dll Hello Jonathan Thor
 From: Thor
 Hello Jonathan
+```
+
+### Exit Codes
+Thor.NET will control the exit code for the program.  If everything is successful, then it will return 0.  If an invalid command is provided, or missing parameters, then it will return 1.
+
+```powershell
+PS C:\MyCLI> dotnet MyCLI.dll Hello
+"Hello" was called incorrectly. Call as "Hello NAME"
+  NAME # Missing parameter
+PS C:\MyCLI> echo $LASTEXITCODE
+1
+```
+
+You can control the exit code by returning an `int` or `Task<int>` from your method:
+
+```csharp
+class Program : Thor {
+    [Desc("Exit CODE", "stops the process with the specified exit code")]
+    public int Exit(int code) => code;
+}
+```
+
+And here is what it looks like:
+
+```powershell
+PS C:\MyCLI> dotnet MyCLI.dll Exit 100
+PS C:\MyCLI> echo $LASTEXITCODE
+100
 ```
 
 ### Long Description
