@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ThorNet.Sample
 {
@@ -11,7 +12,7 @@ namespace ThorNet.Sample
             Subcommand<Messages>("messages");
         }
 
-        [Desc("count TO", "count up to TO")]
+        [Desc("Count TO", "count up to TO")]
         public void Count(int to)
         {
             for (int i = 1; i <= to; i++)
@@ -19,8 +20,18 @@ namespace ThorNet.Sample
                 Console.WriteLine(i);
             }
         }
+
+        [Desc("Delay TIME", "delays in milliseconds")]
+        public async Task Delay(int time)
+        {
+            bool verbose = Flag("verbose");
+
+            if (verbose) { Console.WriteLine($"> delaying {time}ms"); }
+            await Task.Delay(time);
+            if (verbose) { Console.WriteLine($"> done delaying {time}ms"); }
+        }
         
-        [Desc("goodbye", "say goodbye to the world")]
+        [Desc("Goodbye", "say goodbye to the world")]
         public void Goodbye()
         {
             bool verbose = Flag("verbose");
