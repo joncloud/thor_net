@@ -22,7 +22,7 @@ Install-Package ThorNet
 Or update `project.json` to include a dependency on
 
 ```json
-"ThorNet": "0.3.0.0"
+"ThorNet": "0.4.0"
 ```
 
 ## Usage
