@@ -1,5 +1,8 @@
-﻿{
+{
   "authors": [ "joncloud" ],
+  "buildOptions": {
+    "xmlDoc": true
+  },
   "copyright": "Copyright (c) 2015 joncloud (jdberube@gmail.com)",
   "description": "Thor.NET is a port of a popular ruby framework for command-line interfaces.",
   "frameworks": {
@@ -30,5 +33,5 @@
   "tooling": {
     "defaultNamespace": "ThorNet"
   },
-  "version": "0.4.0"
+  "version": "1.0.0"
 }

@@ -1,6 +1,6 @@
 ﻿namespace ThorNet
 {
-    public enum BindingResultType
+    internal enum BindingResultType
     {
         Missing = 1,
         InvalidFormat = 2
