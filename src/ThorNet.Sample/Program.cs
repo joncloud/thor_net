@@ -45,6 +45,18 @@ namespace ThorNet.Sample
         }
 
         [Desc("Hello NAME", "say hello to NAME")]
+        [LongDesc(@"
+            `cli.dll Hello` will print out a message to a person of your
+            choosing.
+ 
+            You can optionally specify a second parameter, which will print
+            out a from message as well.
+ 
+            PS C:\MyCLI> dotnet cli.dll hello Jonathan --from=Thor
+            
+            From: Thor
+            
+            Hello Jonathan")]
         [Option("from", "f", "who the message is from")]
         [Option("repeat", "r", "repeats the message")]
         [Option("yell", "y", "yells the message", Flag = true)]

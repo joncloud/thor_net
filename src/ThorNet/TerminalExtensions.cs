@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ThorNet
 {
@@ -16,6 +13,16 @@ namespace ThorNet
                 int delta = sb.Length - terminal.Width + suffix.Length;
                 sb.Remove(terminal.Width - suffix.Length, delta);
                 sb.Append(suffix);
+            }
+        }
+
+        public static void Wrap(this ITerminal terminal, StringBuilder sb)
+        {
+            int length = sb.Length, count = 0;
+            while (length > terminal.Width)
+            {
+                sb.Insert((terminal.Width * ++count), Environment.NewLine);
+                length -= terminal.Width;
             }
         }
     }

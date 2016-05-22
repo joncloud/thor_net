@@ -125,7 +125,31 @@ PS C:\MyCLI> echo $LASTEXITCODE
 
 ### Long Description
 
-Not currently implemented.
+If you want to provide a longer description for help use the `LongDesc` attribute:
+
+```csharp
+class Program : Thor {
+    [Desc("Hello NAME", "say hello to NAME")]
+    [LongDesc(@"
+        `cli.dll Hello` will print out a message to a person of your
+        choosing.
+ 
+        You can optionally specify a second parameter, which will print
+        out a from message as well.
+ 
+        PS C:\MyCLI> dotnet cli.dll hello Jonathan Thor
+            
+        From: Thor
+            
+        Hello Jonathan")]
+    public void Hello(string name, string from = null) {
+        if (from != null) { Console.WriteLine($"From: {from}"); }
+        Console.WriteLine($"Hello {name}");
+    }
+}
+```
+
+Thor.NET will trim spaces, and group lines together by single line breaks.
 
 ### Options and Flags
 

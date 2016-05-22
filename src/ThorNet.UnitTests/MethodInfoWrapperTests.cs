@@ -5,20 +5,22 @@ using Xunit;
 
 namespace ThorNet.UnitTests {
 	public class MethodInfoWrapperTests {
-		
-		[InlineData("Int", "", "", typeof(int))]
-		[InlineData("String", "", "", typeof(string))]
-		[InlineData("Void", "", "", typeof(void))]
-		[InlineData("Void_WithDescription", "Lorem", "", typeof(void))]
-		[InlineData("Void_WithDescriptionAndExample", "Ipsum", "Dolor", typeof(void))]
-		[InlineData("Void_WithExample", "", "Sit", typeof(void))]
+
+        [InlineData(nameof(Helper.HasLongDescription), "", "", "LongDescription", typeof(void))]
+        [InlineData(nameof(Helper.Int), "", "", "", typeof(int))]
+		[InlineData(nameof(Helper.String), "", "", "", typeof(string))]
+		[InlineData(nameof(Helper.Void), "", "", "", typeof(void))]
+		[InlineData(nameof(Helper.Void_WithDescription), "Lorem", "", "", typeof(void))]
+		[InlineData(nameof(Helper.Void_WithDescriptionAndExample), "Ipsum", "Dolor", "", typeof(void))]
+		[InlineData(nameof(Helper.Void_WithExample), "", "Sit", "", typeof(void))]
 		[Theory]
-		public void Ctor_Tests(string name, string description, string example, Type returnType) {
+		public void Ctor_Tests(string name, string description, string example, string longDescription, Type returnType) {
 			MethodInfoWrapper target = Create(name);
 			
 			Assert.Equal(name, target.Name);
 			Assert.Equal(description, target.Description);
 			Assert.Equal(example, target.Example);
+            Assert.Equal(longDescription, target.LongDescription);
 			Assert.Equal(returnType, target.ReturnType);
 		}
 		
@@ -82,7 +84,9 @@ namespace ThorNet.UnitTests {
 			public Helper(object result) {
 				_result = result;
 			}
-			
+
+            [LongDesc("LongDescription")]
+            public void HasLongDescription() { }
 			public int Int() { return (int)_result; }
 			public string String() { return (string)_result; }
 			public void Void() { }
