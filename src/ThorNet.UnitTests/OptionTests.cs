@@ -36,9 +36,13 @@ namespace ThorNet.UnitTests
         [Option("classDefault", "d", "", DefaultValue = "ClassDefault")]
         public class Target : Thor
         {
-            public static Options OptionValues { get; set; }
+            public Target()
+                : base(NullTerminal.Instance)
+            {
+            }
 
-            [Desc("", "")]
+            public static Options OptionValues { get; set; }
+            
             [Option("method", "m", "")]
             [Option("methodDefault", "n", "", DefaultValue = "MethodDefault")]
             public void Test()

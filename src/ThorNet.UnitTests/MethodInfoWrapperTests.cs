@@ -6,12 +6,12 @@ using Xunit;
 namespace ThorNet.UnitTests {
 	public class MethodInfoWrapperTests {
 		
-		[InlineData("Int", null, null, typeof(int))]
-		[InlineData("String", null, null, typeof(string))]
-		[InlineData("Void", null, null, typeof(void))]
-		[InlineData("Void_WithDescription", "Lorem", null, typeof(void))]
+		[InlineData("Int", "", "", typeof(int))]
+		[InlineData("String", "", "", typeof(string))]
+		[InlineData("Void", "", "", typeof(void))]
+		[InlineData("Void_WithDescription", "Lorem", "", typeof(void))]
 		[InlineData("Void_WithDescriptionAndExample", "Ipsum", "Dolor", typeof(void))]
-		[InlineData("Void_WithExample", null, "Sit", typeof(void))]
+		[InlineData("Void_WithExample", "", "Sit", typeof(void))]
 		[Theory]
 		public void Ctor_Tests(string name, string description, string example, Type returnType) {
 			MethodInfoWrapper target = Create(name);

@@ -33,15 +33,13 @@ namespace ThorNet.UnitTests
         public class Target : Thor
         {
             public Target()
+                : base(NullTerminal.Instance)
             {
                 Subcommand<SubTarget>();
             }
-
-            [Desc("", "")]
+            
             public int Constant() => 100;
-            [Desc("", "")]
             public Task<int> ConstantTask() => Task.FromResult(200);
-            [Desc("", "")]
             public void Throws()
             {
                 throw new InvalidOperationException();
@@ -50,11 +48,13 @@ namespace ThorNet.UnitTests
 
         public class SubTarget : Thor
         {
-            [Desc("", "")]
+            public SubTarget()
+                : base(NullTerminal.Instance)
+            {
+            }
+            
             public int Constant() => 101;
-            [Desc("", "")]
             public Task<int> ConstantTask() => Task.FromResult(201);
-            [Desc("", "")]
             public void Throws()
             {
                 throw new InvalidOperationException();

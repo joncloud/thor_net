@@ -13,13 +13,13 @@ namespace ThorNet {
         
         public Thor() 
             : this(new ConsoleWrapper()) {
-            Commands = LoadCommands();
-            _options = new Dictionary<string, List<string>>();
-            _subCommands = new Dictionary<string, Func<Thor>>();
         }
         
         public Thor(ITerminal terminal) {
+            Commands = LoadCommands();
             Terminal = terminal;
+            _options = new Dictionary<string, List<string>>();
+            _subCommands = new Dictionary<string, Func<Thor>>();
         }
         
         internal bool IsSubcommand { get; set; }
@@ -96,7 +96,7 @@ namespace ThorNet {
         /// <returns>The exit code to return to the command prompt.</returns>
         internal int Invoke(string commandName, string[] args) {
             // Show warnings for any public methods that don't have examples defined.
-            foreach (string invalid in Commands.Where(p => p.Value.Example == null)
+            foreach (string invalid in Commands.Where(p => string.IsNullOrEmpty(p.Value.Example))
                                                 .Select(p => p.Value.Name)) {
                 Terminal.WriteLine($"[WARNING] Attempted to create command \"{invalid}\" without usage or description. Add Desc if you want this method to be available as command, or declare it as a non-public member.");   
             }
@@ -109,7 +109,6 @@ namespace ThorNet {
                     Terminal.WriteLine($"[ERROR] {ex.Message}");
                     return 1;
                 }
-                return 0;
             }
             else {
                 Thor subcommand;
