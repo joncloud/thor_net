@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 744.09448819 1052.3622047"
+   width="373.858"
+   height="373.858"
+   viewBox="0 0 373.85801 373.85801"
    id="svg4151"
    version="1.1"
    inkscape:version="0.91 r13725"
@@ -25,7 +25,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
+     inkscape:zoom="0.5"
      inkscape:cx="321.79408"
      inkscape:cy="752.43952"
      inkscape:document-units="px"
@@ -35,7 +35,8 @@
      inkscape:window-height="1044"
      inkscape:window-x="100"
      inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     units="px" />
   <metadata
      id="metadata4156">
     <rdf:RDF>
@@ -51,58 +52,68 @@
   <g
      inkscape:groupmode="layer"
      id="layer4"
-     inkscape:label="Blue">
+     inkscape:label="Blue"
+     style="display:inline"
+     transform="translate(0,-678.50416)">
     <rect
        style="fill:#00a4ee;fill-opacity:1;stroke:none;stroke-width:1.14187551"
        id="rect4179-3"
        width="373.85812"
        height="373.85812"
-       x="160.57094"
-       y="107.93314" />
+       x="0.28546143"
+       y="677.93317" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer6"
-     inkscape:label="Red">
+     inkscape:label="Red"
+     style="display:inline"
+     transform="translate(0,-678.50416)">
     <rect
        style="fill:#f25022;fill-opacity:1;stroke:none;stroke-width:0.57093775"
        id="rect4179-3-2"
        width="186.92906"
        height="186.92906"
-       x="160.28548"
-       y="107.64767" />
+       x="0"
+       y="677.64764" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer7"
-     inkscape:label="Green">
+     inkscape:label="Green"
+     style="display:inline"
+     transform="translate(0,-678.50416)">
     <rect
        style="fill:#7eb900;fill-opacity:1;stroke:none;stroke-width:0.57093775"
        id="rect4179-3-2-9"
        width="186.92906"
        height="191.76239"
-       x="347.5"
-       y="107.59981" />
+       x="187.21452"
+       y="677.59979" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer8"
-     inkscape:label="Yellow">
+     inkscape:label="Yellow"
+     style="display:inline"
+     transform="translate(0,-678.50416)">
     <rect
        style="fill:#feb800;fill-opacity:1;stroke:none;stroke-width:0.57093775"
        id="rect4179-3-2-9-9"
        width="186.92906"
        height="186.92906"
-       x="347.5"
-       y="295.43314" />
+       x="187.21452"
+       y="865.43317" />
   </g>
   <g
      inkscape:groupmode="layer"
      id="layer3"
-     inkscape:label="Layer 2">
+     inkscape:label="Layer 2"
+     style="display:inline"
+     transform="translate(0,-678.50416)">
     <path
-       style="fill:#682a7b;fill-rule:evenodd;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;fill-opacity:1"
-       d="m 482.34784,169.08533 -73.74114,0 -4.04061,35.35534 -106.06601,0 14.64721,37.37564 -134.35029,0 196.47467,59.09393 -18.18275,-45.45687 42.93149,0 -16.16244,150.00765 111.11678,0 5.55584,-53.53808 -36.3655,0 10.10153,-92.42896 35.35534,0 6.06091,-55.05331 -38.89087,0 z"
+       style="fill:#682a7b;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 322.06236,739.08534 -73.74114,0 -4.04061,35.35534 -106.06601,0 14.64721,37.37564 -134.350287,0 196.474667,59.09393 -18.18275,-45.45687 42.93149,0 -16.16244,150.00765 111.11678,0 5.55584,-53.53808 -36.3655,0 10.10153,-92.42896 35.35534,0 6.06091,-55.05331 -38.89087,0 z"
        id="path4171"
        inkscape:connector-curvature="0" />
   </g>
