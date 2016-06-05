@@ -9,17 +9,50 @@ namespace ThorNet
         {
             args = new object[parameters.Length];
             var results = new List<BindingResult>();
-            for (int i = 0; i < textArgs.Count; i++)
+            int arrayIndex = 0;
+            int parameterIndex = 0;
+            for (int argIndex = 0; argIndex < textArgs.Count; argIndex++)
             {
-                string textArg = textArgs[i];
-                IParameter parameter = parameters[i];
-                try
+                string textArg = textArgs[argIndex];
+                IParameter parameter = parameters[parameterIndex];
+
+                if (parameter.Type.IsArray)
                 {
-                    args[i] = TypeHelper.Convert(textArg, parameter.Type);
+                    if (parameterIndex == parameters.Length - 1)
+                    {
+                        Type elementType = parameter.Type.GetElementType();
+                        Array array = (Array)args[parameterIndex]
+                            ?? Array.CreateInstance(elementType, textArgs.Count - parameterIndex);
+
+                        try
+                        {
+                            array.SetValue(
+                                TypeHelper.Convert(textArg, elementType),
+                                arrayIndex++);
+                        }
+                        catch (FormatException)
+                        {
+                            results.Add(new BindingResult(parameter.Name, BindingResultType.InvalidFormat));
+                        }
+
+                        args[parameterIndex] = array;
+                    }
+                    else
+                    {
+                        results.Add(new BindingResult(parameter.Name, BindingResultType.InvalidArrayPosition));
+                    }
                 }
-                catch (FormatException)
+                else
                 {
-                    results.Add(new BindingResult(parameter.Name, BindingResultType.InvalidFormat));
+                    try
+                    {
+                        args[argIndex] = TypeHelper.Convert(textArg, parameter.Type);
+                    }
+                    catch (FormatException)
+                    {
+                        results.Add(new BindingResult(parameter.Name, BindingResultType.InvalidFormat));
+                    }
+                    parameterIndex++;
                 }
             }
 

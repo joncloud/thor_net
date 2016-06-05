@@ -69,7 +69,7 @@ namespace ThorNet
         protected bool Flag(string name) => Option(name) != null;
 
         /// <summary>
-        /// Gets the name of the package for display in the <see cref="help(string, string)"/> method.
+        /// Gets the name of the package for display in the <see cref="help(string, string[])"/> method.
         /// </summary>
         protected virtual string GetPackageName() =>
             GetType().GetTypeInfo().Assembly.GetName().Name;
@@ -85,10 +85,10 @@ namespace ThorNet
         /// Prints help context for all commands exposed by this thor instance.
         /// </summary>
         /// <param name="commandName">The optional command name to provide detailed help for.</param>
-        /// <param name="subcommandName">The optional sub-command name to provid detailed help for.</param>
+        /// <param name="subcommandNames">The optional sub-command name(s) to provide detailed help for.</param>
         /// <returns>The exit code to return to the command line.</returns>
         [Desc("help COMMAND", "Describe available commands or one specific command")]
-        public int help(string commandName = null, string subcommandName = null)
+        internal int help(string commandName = null, string[] subcommandNames = null)
         {
             // Print all of the commands.
             if (commandName == null)
@@ -100,7 +100,7 @@ namespace ThorNet
             // Print a specific command.
             else
             {
-                return PrintCommandHelp(commandName, subcommandName);
+                return PrintCommandHelp(commandName, subcommandNames);
             }
         }
 
@@ -148,16 +148,27 @@ namespace ThorNet
 
         private Dictionary<string, ThorCommand> LoadCommands()
         {
-            Dictionary<string, ThorCommand> commands = new Dictionary<string, ThorCommand>();
-
             var type = GetType().GetTypeInfo();
 
             // Find all public instance methods.  Ignore any public properties.
-            return type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+            var commands = type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
                         .Where(m => typeof(Thor).GetTypeInfo().IsAssignableFrom(m.DeclaringType) &&
                                     !m.IsSpecialName)
                         .Select(m => new ThorCommand((IThor)this, new MethodInfoWrapper(m), Terminal))
                         .ToDictionary(c => c.Name);
+            
+            var method = typeof(Thor)
+                .GetTypeInfo()
+                .GetMethod(nameof(help), BindingFlags.Instance | BindingFlags.NonPublic);
+
+            commands.Add(
+                nameof(help),
+                new ThorCommand(
+                    this,
+                    new MethodInfoWrapper(method),
+                    Terminal));
+
+            return commands;
         }
 
         /// <summary>
@@ -306,7 +317,7 @@ namespace ThorNet
             }
         }
 
-        int PrintCommandHelp(string commandName, string subcommandName)
+        int PrintCommandHelp(string commandName, string[] subcommandNames)
         {
             // Handle commands.
             ThorCommand command;
@@ -396,7 +407,9 @@ namespace ThorNet
                 Thor subcommand;
                 if (TryGetSubcommand(commandName, out subcommand))
                 {
-                    return subcommand.help(subcommandName);
+                    return subcommand.help(
+                        subcommandNames?.FirstOrDefault(), 
+                        subcommandNames?.Skip(1).ToArray());
                 }
                 else
                 {
@@ -476,7 +489,7 @@ namespace ThorNet
                 throw new ArgumentOutOfRangeException(nameof(name), $"{name} is a command, and cannot also be a subcommand.");
             }
 
-            SubCommands.Add(name ?? typeof(T).Name, () => new T());
+            SubCommands.Add(name ?? typeof(T).Name, () => new T() { IsSubcommand = true });
         }
 
         bool TryGetSubcommand(string name, out Thor thor)
