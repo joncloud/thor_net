@@ -13,7 +13,7 @@ namespace ThorNet
     {
         internal readonly Dictionary<string, ThorCommand> Commands;
         private Dictionary<string, List<string>> _options;
-        private Dictionary<string, Func<Thor>> _subCommands;
+        internal readonly Dictionary<string, Func<Thor>> SubCommands;
 
         /// <summary>
         /// Creates a new thor.
@@ -32,7 +32,7 @@ namespace ThorNet
             Commands = LoadCommands();
             Terminal = terminal;
             _options = new Dictionary<string, List<string>>();
-            _subCommands = new Dictionary<string, Func<Thor>>();
+            SubCommands = new Dictionary<string, Func<Thor>>();
         }
 
         internal bool IsSubcommand { get; set; }
@@ -252,6 +252,20 @@ namespace ThorNet
             return commandName;
         }
 
+        IEnumerable<Thor> GetAllSubCommands(Thor parent)
+        {
+            foreach (var factory in parent.SubCommands.Values)
+            {
+                var child = factory();
+                yield return child;
+
+                foreach (var subFactory in GetAllSubCommands(child))
+                {
+                    yield return subFactory;
+                }
+            }
+        }
+
         IEnumerable<string> GetLongDescriptionLines(string description)
         {
             var lines = description.Split(new[] { "\r\n" }, StringSplitOptions.None);
@@ -398,8 +412,7 @@ namespace ThorNet
         {
             Terminal.WriteLine("Tasks:");
 
-            var commands = _subCommands.Values
-                .Select(factory => factory())
+            var commands = GetAllSubCommands(this)
                 .SelectMany(t => t.Commands)
                 .Where(pair => pair.Key != nameof(help))
                 .Concat(Commands)
@@ -463,13 +476,13 @@ namespace ThorNet
                 throw new ArgumentOutOfRangeException(nameof(name), $"{name} is a command, and cannot also be a subcommand.");
             }
 
-            _subCommands.Add(name ?? typeof(T).Name, () => new T() { IsSubcommand = true });
+            SubCommands.Add(name ?? typeof(T).Name, () => new T());
         }
 
         bool TryGetSubcommand(string name, out Thor thor)
         {
             Func<Thor> factory;
-            if (_subCommands.TryGetValue(name, out factory))
+            if (SubCommands.TryGetValue(name, out factory))
             {
                 thor = factory();
                 return true;
