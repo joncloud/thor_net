@@ -401,6 +401,7 @@ namespace ThorNet
             var commands = _subCommands.Values
                 .Select(factory => factory())
                 .SelectMany(t => t.Commands)
+                .Where(pair => pair.Key != nameof(help))
                 .Concat(Commands)
                 .Select(p => p.Value)
                 .ToArray();
