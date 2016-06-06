@@ -1,7 +1,9 @@
 # Thor.NET
 
-[![Travis](https://img.shields.io/travis/joncloud/thor_net.svg)]()
-[![NuGet](https://img.shields.io/nuget/v/ThorNet.svg)]()
+[![Travis](https://img.shields.io/travis/joncloud/thor_net.svg)](https://travis-ci.org/joncloud/thor_net/)
+[![NuGet](https://img.shields.io/nuget/v/ThorNet.svg)](https://www.nuget.org/packages/ThorNet/)
+
+<img src="https://raw.githubusercontent.com/joncloud/thor_net/master/nuget.png" alt="thor.net" />
 
 ## Description
 Thor.NET is a port of the ruby [Thor][] framework for building self-documenting command line utilities.
