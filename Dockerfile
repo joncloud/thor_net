@@ -1,5 +1,5 @@
 FROM microsoft/dotnet:onbuild
 MAINTAINER joncloud <jdberube@gmail.com>
 
-WORKDIR /dotnetapp/src/ThorNet.UnitTests/
+WORKDIR /dotnetapp/tests/ThorNet.UnitTests/
 ENTRYPOINT dotnet test
