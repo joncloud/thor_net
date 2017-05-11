@@ -244,7 +244,7 @@ namespace ThorNet
         /// Prepares the input arguments to invoke <see cref="Thor.Invoke(string, string[])"/>
         /// </summary>
         /// <param name="args">The array of arguments provided.  This is modified to remove the first argument if present.</param>
-        /// <returns>The name of the command to invoke.  If no arguments are provided, this defaults to <see cref="help(string,string)"/>.</returns>
+        /// <returns>The name of the command to invoke.  If no arguments are provided, this defaults to <see cref="help(string, string[])"/>.</returns>
         internal static string PrepareInvocationArguments(ref string[] args)
         {
             string commandName;
