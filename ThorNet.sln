@@ -3,21 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ThorNet", "ThorNet\ThorNet.xproj", "{4EB8534F-520B-4878-A8CA-BCC8BC041F01}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ThorNet", "src\ThorNet\ThorNet.xproj", "{4EB8534F-520B-4878-A8CA-BCC8BC041F01}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6ADD7F82-D7BF-4FD3-B688-E773045978D5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{68E0667B-D536-4EB9-B828-0B3E3F360AD2}"
 	ProjectSection(SolutionItems) = preProject
-		..\.gitignore = ..\.gitignore
-		..\global.json = ..\global.json
-		..\LICENSE.md = ..\LICENSE.md
-		..\README.md = ..\README.md
+		.gitignore = .gitignore
+		global.json = global.json
+		LICENSE.md = LICENSE.md
+		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ThorNet.UnitTests", "ThorNet.UnitTests\ThorNet.UnitTests.xproj", "{06AA9963-39C7-43BB-B09E-7447CB1FEB32}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ThorNet.UnitTests", "tests\ThorNet.UnitTests\ThorNet.UnitTests.xproj", "{06AA9963-39C7-43BB-B09E-7447CB1FEB32}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ThorNet.Sample", "ThorNet.Sample\ThorNet.Sample.xproj", "{0344862F-04F2-4EF0-87E1-21B57EDB77BC}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ThorNet.Sample", "src\ThorNet.Sample\ThorNet.Sample.xproj", "{0344862F-04F2-4EF0-87E1-21B57EDB77BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CC65E5AA-BEF1-498A-8AE0-411CBC617D87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,7 +45,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4EB8534F-520B-4878-A8CA-BCC8BC041F01} = {6ADD7F82-D7BF-4FD3-B688-E773045978D5}
-		{06AA9963-39C7-43BB-B09E-7447CB1FEB32} = {6ADD7F82-D7BF-4FD3-B688-E773045978D5}
+		{06AA9963-39C7-43BB-B09E-7447CB1FEB32} = {CC65E5AA-BEF1-498A-8AE0-411CBC617D87}
 		{0344862F-04F2-4EF0-87E1-21B57EDB77BC} = {6ADD7F82-D7BF-4FD3-B688-E773045978D5}
 	EndGlobalSection
 EndGlobal
