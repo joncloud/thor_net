@@ -1,25 +1,24 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6ADD7F82-D7BF-4FD3-B688-E773045978D5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "global", "global", "{68E0667B-D536-4EB9-B828-0B3E3F360AD2}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
-		global.json = global.json
 		LICENSE.md = LICENSE.md
 		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CC65E5AA-BEF1-498A-8AE0-411CBC617D87}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThorNet", "src\ThorNet\ThorNet.csproj", "{B9F274BA-4E0B-4BE7-BCB4-40CC02E155F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThorNet", "src\ThorNet\ThorNet.csproj", "{B9F274BA-4E0B-4BE7-BCB4-40CC02E155F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThorNet.Sample", "src\ThorNet.Sample\ThorNet.Sample.csproj", "{A5245BA5-753D-447C-8131-F80DCB8221B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThorNet.Sample", "src\ThorNet.Sample\ThorNet.Sample.csproj", "{A5245BA5-753D-447C-8131-F80DCB8221B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThorNet.UnitTests", "tests\ThorNet.UnitTests\ThorNet.UnitTests.csproj", "{A70AB355-1631-479E-B78E-B697F96B2F9A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ThorNet.UnitTests", "tests\ThorNet.UnitTests\ThorNet.UnitTests.csproj", "{A70AB355-1631-479E-B78E-B697F96B2F9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,5 +46,8 @@ Global
 		{B9F274BA-4E0B-4BE7-BCB4-40CC02E155F4} = {6ADD7F82-D7BF-4FD3-B688-E773045978D5}
 		{A5245BA5-753D-447C-8131-F80DCB8221B5} = {6ADD7F82-D7BF-4FD3-B688-E773045978D5}
 		{A70AB355-1631-479E-B78E-B697F96B2F9A} = {CC65E5AA-BEF1-498A-8AE0-411CBC617D87}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EC3F652B-6B29-4786-A33A-0E815955A8CB}
 	EndGlobalSection
 EndGlobal
