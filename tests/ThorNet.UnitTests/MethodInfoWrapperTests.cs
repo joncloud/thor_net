@@ -34,6 +34,7 @@ namespace ThorNet.UnitTests
         [InlineData("String", "a")]
         [InlineData("String", "abc")]
         [InlineData("Void", null)]
+        [Theory]
         public void Invoke_Tests(string name, object expected)
         {
             MethodInfoWrapper target = Create(name);
@@ -46,6 +47,7 @@ namespace ThorNet.UnitTests
         }
 
         [InlineData("Void_WithMethodOption", "alpha,omega", "a,o", "beginning,ending")]
+        [Theory]
         public void Options_Tests(string name, string namesList, string aliasesList, string descriptionsList)
         {
             MethodInfoWrapper target = Create(name);
@@ -67,6 +69,7 @@ namespace ThorNet.UnitTests
         [InlineData("Void_WithParametersX", "x")]
         [InlineData("Void_WithParametersXY", "x,y")]
         [InlineData("Void_WithParametersXYZ", "x,y,z")]
+        [Theory]
         public void Parameters_Tests(string name, string parametersList)
         {
             MethodInfoWrapper target = Create(name);
