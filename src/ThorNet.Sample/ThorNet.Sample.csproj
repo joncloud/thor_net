@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>joncloud</Authors>
+    <AssemblyName>ThorNet.Sample</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>ThorNet.Sample</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../ThorNet/ThorNet.csproj" />
+  </ItemGroup>
+
+</Project>

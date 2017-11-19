@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.5</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <VersionPrefix>2.0.0</VersionPrefix>
+    <VersionSuffix>local</VersionSuffix>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <Description>Thor.NET is a port of a popular ruby framework for command-line interfaces.</Description>
+    <Copyright>Copyright (c) 2015 joncloud (jdberube@gmail.com)</Copyright>
+    <AssemblyTitle>Thor .NET</AssemblyTitle>
+    <Authors>joncloud</Authors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>ThorNet</AssemblyName>
+    <PackageId>ThorNet</PackageId>
+    <PackageTags>arguments;command;console;shell;terminal;thor;thornet</PackageTags>
+    <PackageReleaseNotes>https://github.com/joncloud/thor_net/releases</PackageReleaseNotes>
+    <PackageIconUrl>https://raw.githubusercontent.com/joncloud/thor_net/master/nuget.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/joncloud/thor_net</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/joncloud/thor_net/master/LICENSE.md</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/joncloud/thor_net</RepositoryUrl>
+  </PropertyGroup>
+
+</Project>

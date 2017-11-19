@@ -7,10 +7,10 @@ namespace ThorNet.UnitTests
 {
     public class ThorCommandTests
     {
-        [InlineData(nameof(Target.RequiredParameter), BindingResultType.Missing, "a", "b,c")]
-        [InlineData(nameof(Target.RequiredParameter), BindingResultType.Missing, "a,b", "c")]
-        [InlineData(nameof(Target.Parsing), BindingResultType.InvalidFormat, "123,b", "b")]
-        [InlineData(nameof(Target.Parsing), BindingResultType.InvalidFormat, "a,2016-05-21", "a")]
+        [InlineData(nameof(Target.RequiredParameter), (int)BindingResultType.Missing, "a", "b,c")]
+        [InlineData(nameof(Target.RequiredParameter), (int)BindingResultType.Missing, "a,b", "c")]
+        [InlineData(nameof(Target.Parsing), (int)BindingResultType.InvalidFormat, "123,b", "b")]
+        [InlineData(nameof(Target.Parsing), (int)BindingResultType.InvalidFormat, "a,2016-05-21", "a")]
         [Theory]
         public void BindArguments_Throws(string commandName, int type, string argsList, string expectedMissing)
         {
