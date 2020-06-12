@@ -1,5 +1,6 @@
 # Thor.NET
 
+![.NET Core](https://github.com/joncloud/thor_net/workflows/.NET%20Core/badge.svg)
 [![NuGet](https://img.shields.io/nuget/v/ThorNet.svg)](https://www.nuget.org/packages/ThorNet/)
 
 <img src="https://raw.githubusercontent.com/joncloud/thor_net/master/nuget.png" alt="thor.net" />
