@@ -19,7 +19,7 @@
     <PackageId>ThorNet</PackageId>
     <PackageTags>arguments;command;console;shell;terminal;thor;thornet</PackageTags>
     <PackageReleaseNotes>https://github.com/joncloud/thor_net/releases</PackageReleaseNotes>
-    <PackageIcon>icon.png</PackageIcon>
+    <PackageIcon>nuget.png</PackageIcon>
     <PackageProjectUrl>https://github.com/joncloud/thor_net</PackageProjectUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
@@ -27,7 +27,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\..\icon.png" Pack="true" PackagePath="\"/>
+    <None Include="..\..\nuget.png" Pack="true" PackagePath="\"/>
   </ItemGroup>
   
 </Project>
