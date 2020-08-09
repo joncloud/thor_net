@@ -1,4 +1,7 @@
-﻿using Xunit;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Xunit;
 
 namespace ThorNet.UnitTests
 {
@@ -20,6 +23,49 @@ namespace ThorNet.UnitTests
             Assert.Equal(valuesList[3], Target.OptionValues.MethodDefault);
         }
 
+        [Fact]
+        public void Help_ShouldIncludeHyphen_GivenAliasWithoutHyphen()
+        {
+            var lines = GetHelp();
+
+            var actual = Assert.Single(
+                lines.Where(line => line.Trim().StartsWith("-c"))
+            ).Trim();
+
+            var expected = "-c, [--class=CLASS]   # class desc";
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public void Help_ShouldIncludeHyphen_GivenAliasWithHyphen()
+        {
+            var lines = GetHelp();
+
+            var actual = Assert.Single(
+                lines.Where(line => line.Trim().StartsWith("-n"))
+            ).Trim();
+
+            var expected = "-n, [--methodDefault=METHODDEFAULT] # method default help";
+            Assert.Equal(expected, actual);
+        }
+
+        static IEnumerable<string> GetHelp()
+        {
+            var terminal = new MockTerminal(100);
+
+            var commandName = nameof(Thor.help);
+            var args = new[]
+            {
+                nameof(Target.Test)
+            };
+            new Target(terminal).Invoke(commandName, args);
+
+            var lines = terminal.ToString()
+                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+            return lines;
+        }
+
         public class Options
         {
             public string Class { get; set; }
@@ -28,7 +74,7 @@ namespace ThorNet.UnitTests
             public string MethodDefault { get; set; }
         }
 
-        [Option("class", "c", "")]
+        [Option("class", "c", "class desc")]
         [Option("classDefault", "d", "", DefaultValue = "ClassDefault")]
         public class Target : Thor
         {
@@ -37,10 +83,15 @@ namespace ThorNet.UnitTests
             {
             }
 
+            public Target(ITerminal terminal)
+                : base(terminal)
+            {
+            }
+
             public static Options OptionValues { get; set; }
             
             [Option("method", "m", "")]
-            [Option("methodDefault", "n", "", DefaultValue = "MethodDefault")]
+            [Option("methodDefault", "-n", "method default help", DefaultValue = "MethodDefault")]
             public void Test()
             {
                 OptionValues.Class = Option("class");

@@ -59,7 +59,12 @@ namespace ThorNet
 
                 return new[] { 
                     // Map using the alias (-1) and full name (--one=).
-                    new { Key = "-" + o.Alias, Option = option },
+                    new { 
+                        Key = o.Alias[0] == '-' 
+                            ? o.Alias 
+                            : "-" + o.Alias,
+                        Option = option
+                    },
                     new { Key = "--" + o.Name, Option = option }
                 };
             })
