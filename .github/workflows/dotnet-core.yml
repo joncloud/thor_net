@@ -30,4 +30,12 @@ jobs:
       run: dotnet test --configuration Release --no-build --no-restore --verbosity normal
 
     - name: Pack
-      run: dotnet pack --configuration Release --no-build --no-restore --version-suffix="beta$GITHUB_RUN_ID" ./src/ThorNet/
+      run: dotnet pack --configuration Release --no-restore --no-build ./src/ThorNet/ThorNet.csproj
+      if: ${{ contains(github.ref, 'refs/heads/publish') }}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v1.0.0
+      if: ${{ contains(github.ref, 'refs/heads/publish') }}
+      with:
+        name: ThorNet
+        path: src/ThorNet/bin/Release
