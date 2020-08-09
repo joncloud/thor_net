@@ -345,7 +345,7 @@ namespace ThorNet
                     const string closeBracket = "]";
                     int max = options.Max(o =>
                         prefix.Length
-                            + o.Alias.Length
+                            + o.Alias.Length + (o.Flag && o.Alias[0] != '-' ? 1 : 0)
                             + o.Name.Length
                             + (o.Flag ? nameSeparator.Length + o.Name.Length : 0))
                         + separator.Length
@@ -357,9 +357,14 @@ namespace ThorNet
 
                     foreach (OptionAttribute option in options)
                     {
+                        message.Append(prefix);
 
-                        message.Append(prefix)
-                            .Append(option.Alias)
+                        if (option.Alias[0] != '-')
+                        {
+                            message.Append("-");
+                        }
+
+                        message.Append(option.Alias)
                             .Append(separator)
                             .Append(openBracket)
                             .Append(namePrefix)
