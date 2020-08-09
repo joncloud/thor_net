@@ -104,6 +104,12 @@ namespace ThorNet
             }
         }
 
+        int HandleException(Exception ex)
+        {
+            Terminal.WriteLine($"[ERROR] {ex.Message}");
+            return 1;
+        }
+
         /// <summary>
         /// Invokes a command by name with the given arguments.
         /// </summary>
@@ -123,10 +129,13 @@ namespace ThorNet
             if (Commands.TryGetValue(commandName, out command))
             {
                 try { return command.Invoke(args); }
+                catch (TargetInvocationException ex)
+                {
+                    return HandleException(ex.InnerException);
+                }
                 catch (Exception ex)
                 {
-                    Terminal.WriteLine($"[ERROR] {ex.Message}");
-                    return 1;
+                    return HandleException(ex);
                 }
             }
             else
