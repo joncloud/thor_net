@@ -12,7 +12,8 @@ namespace ThorNet.Sample
             Subcommand<Messages>("messages");
         }
 
-        [Desc("Count TO", "count up to TO")]
+        [Alias("count")]
+        [Desc("count TO", "count up to TO")]
         public void Count(int to)
         {
             for (int i = 1; i <= to; i++)
@@ -21,7 +22,8 @@ namespace ThorNet.Sample
             }
         }
 
-        [Desc("Delay TIME", "delays in milliseconds")]
+        [Alias("delay")]
+        [Desc("delay TIME", "delays in milliseconds")]
         public async Task Delay(int time)
         {
             bool verbose = Flag("verbose");
@@ -31,10 +33,12 @@ namespace ThorNet.Sample
             if (verbose) { Console.WriteLine($"> done delaying {time}ms"); }
         }
 
-        [Desc("Exit CODE", "stops the process with the specified exit code")]
+        [Alias("exit")]
+        [Desc("exit CODE", "stops the process with the specified exit code")]
         public int Exit(int code) => code;
 
-        [Desc("Goodbye", "say goodbye to the world")]
+        [Alias("goodbye")]
+        [Desc("goodbye", "say goodbye to the world")]
         public void Goodbye()
         {
             bool verbose = Flag("verbose");
@@ -44,15 +48,16 @@ namespace ThorNet.Sample
             if (verbose) { Console.WriteLine("> done saying goodbye"); }
         }
 
-        [Desc("Hello NAME", "say hello to NAME")]
+        [Alias("hello")]
+        [Desc("hello NAME", "say hello to NAME")]
         [LongDesc(@"
-            `cli.dll Hello` will print out a message to a person of your
+            `ThorNet.Sample Hello` will print out a message to a person of your
             choosing.
  
             You can optionally specify a second parameter, which will print
             out a from message as well.
  
-            PS C:\MyCLI> dotnet cli.dll hello Jonathan --from=Thor
+            PS C:\MyCLI> ThorNet.Sample hello Jonathan --from=Thor
             
             From: Thor
             
