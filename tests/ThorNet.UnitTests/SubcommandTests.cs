@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace ThorNet.UnitTests
@@ -32,10 +33,10 @@ namespace ThorNet.UnitTests
         }
 
         [Fact]
-        public void Subcommand_IsTriggered()
+        public async Task Subcommand_IsTriggered()
         {
             Assert.Equal(0, Trigger.Counter);
-            Thor.Start<TriggerTarget>(new[] { nameof(Trigger), nameof(Trigger.Increment) });
+            await Thor.StartAsync<TriggerTarget>(new[] { nameof(Trigger), nameof(Trigger.Increment) });
             Assert.Equal(1, Trigger.Counter);
         }
 

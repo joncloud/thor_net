@@ -22,11 +22,11 @@ namespace ThorNet.UnitTests
         [InlineData("SubTarget,Invalid", 1)]
         [InlineData("SubTarget,Throws", 1)]
         [Theory]
-        public void Test(string argsList, int exitCode)
+        public async Task Test(string argsList, int exitCode)
         {
             string[] args = Utility.ToArray(argsList);
 
-            int actual = Thor.Start<Target>(args);
+            int actual = await Thor.StartAsync<Target>(args);
             Assert.Equal(exitCode, actual);
         }
 

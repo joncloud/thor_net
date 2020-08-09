@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace ThorNet.UnitTests
@@ -10,10 +11,10 @@ namespace ThorNet.UnitTests
         [InlineData("Test,--class=A,--classDefault=B,--method=C,--methodDefault=D", "A,B,C,D")]
         [InlineData("Test,-cA,-dB,-mC,-nD", "A,B,C,D")]
         [Theory]
-        public void Option_Tests(string args, string values)
+        public async Task Option_Tests(string args, string values)
         {
             Target.OptionValues = new Options();
-            Thor.Start<Target>(Utility.ToArray(args));
+            await Thor.StartAsync<Target>(Utility.ToArray(args));
 
             var valuesList = Utility.ToArray(values);
 
@@ -24,9 +25,9 @@ namespace ThorNet.UnitTests
         }
 
         [Fact]
-        public void Help_ShouldIncludeHyphen_GivenAliasWithoutHyphen()
+        public async Task Help_ShouldIncludeHyphen_GivenAliasWithoutHyphen()
         {
-            var lines = GetHelp();
+            var lines = await GetHelpAsync();
 
             var actual = Assert.Single(
                 lines.Where(line => line.Trim().StartsWith("-c"))
@@ -37,9 +38,9 @@ namespace ThorNet.UnitTests
         }
 
         [Fact]
-        public void Help_ShouldIncludeHyphen_GivenAliasWithHyphen()
+        public async Task Help_ShouldIncludeHyphen_GivenAliasWithHyphen()
         {
-            var lines = GetHelp();
+            var lines = await GetHelpAsync();
 
             var actual = Assert.Single(
                 lines.Where(line => line.Trim().StartsWith("-n"))
@@ -49,7 +50,7 @@ namespace ThorNet.UnitTests
             Assert.Equal(expected, actual);
         }
 
-        static IEnumerable<string> GetHelp()
+        static async Task<IEnumerable<string>> GetHelpAsync()
         {
             var terminal = new MockTerminal(100);
 
@@ -58,7 +59,7 @@ namespace ThorNet.UnitTests
             {
                 nameof(Target.Test)
             };
-            new Target(terminal).Invoke(commandName, args);
+            await new Target(terminal).InvokeAsync(commandName, args);
 
             return terminal.GetLines();
         }

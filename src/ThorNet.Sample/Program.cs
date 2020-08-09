@@ -86,9 +86,9 @@ namespace ThorNet.Sample
             if (verbose) { Console.WriteLine("> done saying hello"); }
         }
 
-        public static int Main(string[] args)
+        public static Task<int> Main(string[] args)
         {
-            return Start<Program>(args);
+            return StartAsync<Program>(args);
         }
     }
 }

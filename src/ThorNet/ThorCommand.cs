@@ -77,7 +77,7 @@ namespace ThorNet
              .ToDictionary(x => x.Key, x => x.Option);
         }
 
-        public int Invoke(string[] args)
+        public async Task<int> InvokeAsync(string[] args)
         {
             try
             {
@@ -96,13 +96,11 @@ namespace ThorNet
                 object result = _command.Invoke(_host, arguments);
 
                 // If the result is a task, then make sure to wait for it to complete.  
-                if (typeof(Task).GetTypeInfo().IsAssignableFrom(_command.ReturnType))
+                if (result is Task task)
                 {
-                    Task task = (Task)result;
-                    task.Wait();
+                    await task;
 
-                    var intTask = task as Task<int>;
-                    if (intTask != null)
+                    if (task is Task<int> intTask)
                     {
                         return intTask.Result;
                     }
