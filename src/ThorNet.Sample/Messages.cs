@@ -8,7 +8,8 @@ namespace ThorNet.Sample
     {
         const string MessagesFile = "./Messages.txt";
 
-        [Desc("messages Add MESSAGE", "adds a message")]
+        [Alias("add")]
+        [Desc("messages add MESSAGE", "adds a message")]
         public void Add(string message)
         {
             List<string> lines;
@@ -24,7 +25,8 @@ namespace ThorNet.Sample
             File.WriteAllLines(MessagesFile, lines);
         }
 
-        [Desc("messages List", "lists all messages")]
+        [Alias("list")]
+        [Desc("messages list", "lists all messages")]
         public void List()
         {
             if (File.Exists(MessagesFile))
@@ -38,7 +40,8 @@ namespace ThorNet.Sample
             }
         }
 
-        [Desc("messages Remove ID", "removes a message")]
+        [Alias("remove")]
+        [Desc("messages remove ID", "removes a message")]
         public void Remove(int id)
         {
             if (File.Exists(MessagesFile))

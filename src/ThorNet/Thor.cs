@@ -69,7 +69,7 @@ namespace ThorNet
         protected bool Flag(string name) => Option(name) != null;
 
         /// <summary>
-        /// Gets the name of the package for display in the <see cref="help(string, string[])"/> method.
+        /// Gets the name of the package for display in the <see cref="Help(string, string[])"/> method.
         /// </summary>
         protected virtual string GetPackageName() =>
             GetType().GetTypeInfo().Assembly.GetName().Name;
@@ -87,8 +87,9 @@ namespace ThorNet
         /// <param name="commandName">The optional command name to provide detailed help for.</param>
         /// <param name="subcommandNames">The optional sub-command name(s) to provide detailed help for.</param>
         /// <returns>The exit code to return to the command line.</returns>
-        [Desc("help COMMAND", "Describe available commands or one specific command")]
-        internal int help(string commandName = null, string[] subcommandNames = null)
+        [Alias("help")]
+        [Desc("help COMMAND", "describe available commands or one specific command")]
+        internal int Help(string commandName = null, string[] subcommandNames = null)
         {
             // Print all of the commands.
             if (commandName == null)
@@ -120,7 +121,7 @@ namespace ThorNet
         {
             // Show warnings for any public methods that don't have examples defined.
             foreach (string invalid in Commands.Where(p => string.IsNullOrEmpty(p.Value.Example))
-                                                .Select(p => p.Value.Name))
+                                                .Select(p => p.Value.Display))
             {
                 Terminal.WriteLine($"[WARNING] Attempted to create command \"{invalid}\" without usage or description. Add Desc if you want this method to be available as command, or declare it as a non-public member.");
             }
@@ -160,22 +161,31 @@ namespace ThorNet
             var type = GetType().GetTypeInfo();
 
             // Find all public instance methods.  Ignore any public properties.
-            var commands = type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
-                        .Where(m => typeof(Thor).GetTypeInfo().IsAssignableFrom(m.DeclaringType) &&
-                                    !m.IsSpecialName)
-                        .Select(m => new ThorCommand((IThor)this, new MethodInfoWrapper(m), Terminal))
-                        .ToDictionary(c => c.Name);
-            
-            var method = typeof(Thor)
-                .GetTypeInfo()
-                .GetMethod(nameof(help), BindingFlags.Instance | BindingFlags.NonPublic);
+            var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public)
+                .Where(m => typeof(Thor).GetTypeInfo().IsAssignableFrom(m.DeclaringType))
+                .Where(m => !m.IsSpecialName)
+                .ToList();
+            methods.Add(
+                typeof(Thor)
+                    .GetTypeInfo()
+                    .GetMethod(nameof(Help), BindingFlags.Instance | BindingFlags.NonPublic)
+            );
 
-            commands.Add(
-                nameof(help),
-                new ThorCommand(
-                    this,
-                    new MethodInfoWrapper(method),
-                    Terminal));
+            var commands = new Dictionary<string, ThorCommand>();
+            foreach (var method in methods)
+            {
+                var command = new ThorCommand(
+                    this, 
+                    new MethodInfoWrapper(method), 
+                    Terminal
+                );
+
+                commands[command.Name] = command;
+                if (command.HasAlias)
+                {
+                    commands[command.Alias] = command;
+                }
+            }
 
             return commands;
         }
@@ -253,7 +263,7 @@ namespace ThorNet
         /// Prepares the input arguments to invoke <see cref="Thor.Invoke(string, string[])"/>
         /// </summary>
         /// <param name="args">The array of arguments provided.  This is modified to remove the first argument if present.</param>
-        /// <returns>The name of the command to invoke.  If no arguments are provided, this defaults to <see cref="help(string, string[])"/>.</returns>
+        /// <returns>The name of the command to invoke.  If no arguments are provided, this defaults to <see cref="Help(string, string[])"/>.</returns>
         internal static string PrepareInvocationArguments(ref string[] args)
         {
             string commandName;
@@ -261,7 +271,7 @@ namespace ThorNet
             // Default to help.
             if (!args.Any())
             {
-                commandName = nameof(help);
+                commandName = nameof(Help);
             }
             else
             {
@@ -421,7 +431,7 @@ namespace ThorNet
                 Thor subcommand;
                 if (TryGetSubcommand(commandName, out subcommand))
                 {
-                    return subcommand.help(
+                    return subcommand.Help(
                         subcommandNames?.FirstOrDefault(), 
                         subcommandNames?.Skip(1).ToArray());
                 }
@@ -441,9 +451,10 @@ namespace ThorNet
 
             var commands = GetAllSubCommands(this)
                 .SelectMany(t => t.Commands)
-                .Where(pair => pair.Key != nameof(help))
+                .Where(pair => pair.Key != nameof(Help))
                 .Concat(Commands)
                 .Select(p => p.Value)
+                .Distinct()
                 .ToArray();
 
             const string prefix = "  ";
@@ -453,7 +464,7 @@ namespace ThorNet
 
             foreach (ThorCommand command in commands.OrderBy(c => c.Example))
             {
-                if (IsSubcommand && command.Name == nameof(help)) { continue; }
+                if (IsSubcommand && command.Name == nameof(Help)) { continue; }
 
                 // Create a message like '  {example}  # {description}'
                 message.Append(prefix)

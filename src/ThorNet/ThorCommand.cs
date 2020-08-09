@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ThorNet
 {
-    internal class ThorCommand
+    internal class ThorCommand : IEquatable<ThorCommand>
     {
         private readonly ICommand _command;
         private readonly IThor _host;
@@ -21,6 +22,11 @@ namespace ThorNet
             _terminal = terminal;
         }
 
+        public bool HasAlias => !string.IsNullOrEmpty(Alias);
+        public string Display =>
+            HasAlias ? Alias : Name;
+
+        public string Alias => _command.Alias;
         public string Description => _command.Description;
         public string Example => _command.Example;
         public string LongDescription => _command.LongDescription;
@@ -110,7 +116,7 @@ namespace ThorNet
             }
             catch (MismatchedBindingException ex)
             {
-                _terminal.WriteLine($"\"{Name}\" was called incorrectly. Call as \"{Example}\"");
+                _terminal.WriteLine($"\"{Display}\" was called incorrectly. Call as \"{Example}\"");
 
                 const string prefix = "  ";
                 int max = ex.BindingResults.Max(r => r.Name.Length) + prefix.Length;
@@ -146,6 +152,23 @@ namespace ThorNet
                 }
 
                 return 1;
+            }
+        }
+
+        public override bool Equals(object obj) =>
+            obj is ThorCommand other &&
+            Equals(other);
+
+        public bool Equals(ThorCommand other) =>
+            Equals(_command, other._command);
+
+        public override int GetHashCode()
+        {
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 31;
+                hash = hash * 5 + _command.GetHashCode();
+                return hash;
             }
         }
     }

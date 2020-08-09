@@ -53,7 +53,7 @@ namespace ThorNet.UnitTests
         {
             var terminal = new MockTerminal(100);
 
-            var commandName = nameof(Thor.help);
+            var commandName = nameof(Thor.Help);
             var args = new[]
             {
                 nameof(Target.Test)

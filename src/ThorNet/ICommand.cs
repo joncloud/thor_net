@@ -9,6 +9,11 @@ namespace ThorNet
     public interface ICommand
     {
         /// <summary>
+        /// Gets the alternate name for activating the command.
+        /// </summary>
+        string Alias { get; }
+
+        /// <summary>
         /// Gets the description of the command.
         /// </summary>
         string Description { get; }

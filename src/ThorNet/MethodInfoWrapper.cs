@@ -8,7 +8,7 @@ namespace ThorNet
     /// <summary>
     /// Implements a command by wrapping <see cref="MethodInfo" />
     /// </summary>
-    internal class MethodInfoWrapper : ICommand
+    internal class MethodInfoWrapper : ICommand, IEquatable<MethodInfoWrapper>
     {
         private readonly MethodInfo _method;
 
@@ -22,7 +22,15 @@ namespace ThorNet
 
             var longDesc = _method.GetCustomAttribute<LongDescAttribute>();
             LongDescription = longDesc?.Description ?? "";
+
+            var alias = _method.GetCustomAttribute<AliasAttribute>();
+            Alias = alias?.Alias;
         }
+
+        /// <summary>
+        /// Gets the alternate name for activating the command.
+        /// </summary>
+        public string Alias { get; }
 
         /// <summary>
         /// Gets the description of the command.
@@ -60,6 +68,23 @@ namespace ThorNet
         /// Gets the return type of the command if applicable.
         /// </summary>
         public Type ReturnType => _method.ReturnType;
+
+        public override bool Equals(object obj) =>
+            obj is MethodInfoWrapper other &&
+            Equals(other);
+
+        public bool Equals(MethodInfoWrapper other) =>
+            Equals(_method, other._method);
+
+        public override int GetHashCode()
+        {
+            unchecked // Overflow is fine, just wrap
+            {
+                int hash = 107;
+                hash = hash * 113 + _method.GetHashCode();
+                return hash;
+            }
+        }
 
         /// <summary>
         /// Invokes the command on the host with the specified parameters.
