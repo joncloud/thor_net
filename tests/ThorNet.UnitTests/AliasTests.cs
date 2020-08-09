@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace ThorNet.UnitTests
@@ -8,31 +9,31 @@ namespace ThorNet.UnitTests
     public class AliasTests
     {
         [Fact]
-        public void Invoke_ShouldCallCommand_GivenAlias()
+        public async Task Invoke_ShouldCallCommand_GivenAlias()
         {
             var message = Guid.NewGuid().ToString();
             
             var thor = new T();
-            thor.Invoke("handle", new[] { message });
+            await thor.InvokeAsync("handle", new[] { message });
 
             Assert.Equal(message, thor.Message);
         }
 
         [Fact]
-        public void Invoke_ShouldCallCommand_GivenMethodName()
+        public async Task Invoke_ShouldCallCommand_GivenMethodName()
         {
             var message = Guid.NewGuid().ToString();
 
             var thor = new T();
-            thor.Invoke(nameof(T.Handle), new[] { message });
+            await thor.InvokeAsync(nameof(T.Handle), new[] { message });
 
             Assert.Equal(message, thor.Message);
         }
 
         [Fact]
-        public void Help_ShouldPrintAlias_GivenAlias()
+        public async Task Help_ShouldPrintAlias_GivenAlias()
         {
-            var lines = GetHelp();
+            var lines = await GetHelpAsync();
 
             var actual = Assert.Single(
                 lines.Where(
@@ -44,9 +45,9 @@ namespace ThorNet.UnitTests
         }
 
         [Fact]
-        public void Help_ShouldPrintMethodName_GivenNoAlias()
+        public async Task Help_ShouldPrintMethodName_GivenNoAlias()
         {
-            var lines = GetHelp();
+            var lines = await GetHelpAsync();
 
             var actual = Assert.Single(
                 lines.Where(
@@ -57,13 +58,13 @@ namespace ThorNet.UnitTests
             Assert.Equal(expected, actual);
         }
 
-        static IEnumerable<string> GetHelp()
+        static async Task<IEnumerable<string>> GetHelpAsync()
         {
             var terminal = new MockTerminal(100);
 
             var commandName = nameof(Thor.Help);
             var args = new string[0];
-            new T(terminal).Invoke(commandName, args);
+            await new T(terminal).InvokeAsync(commandName, args);
 
             return terminal.GetLines();
         }

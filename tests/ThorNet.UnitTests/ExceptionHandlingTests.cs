@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace ThorNet.UnitTests
@@ -7,11 +8,11 @@ namespace ThorNet.UnitTests
     public class ExceptionHandlingTests
     {
         [Fact]
-        public void Invoke_ShouldUnwrapTargetInvocationException_GivenThrownException()
+        public async Task Invoke_ShouldUnwrapTargetInvocationException_GivenThrownException()
         {
             var message = Guid.NewGuid().ToString();
             var terminal = new MockTerminal(100);
-            new E(terminal).Invoke(nameof(E.Throw), new[] { message });
+            await new T(terminal).InvokeAsync(nameof(T.Throw), new[] { message });
 
             var actual = Assert.Single(
                 terminal.GetLines().Where(line => line.StartsWith("[ERROR]"))
@@ -21,9 +22,9 @@ namespace ThorNet.UnitTests
             Assert.Equal(expected, actual);
         }
 
-        public class E : Thor
+        public class T : Thor
         {
-            public E(ITerminal terminal)
+            public T(ITerminal terminal)
                 : base(terminal)
             {
             }

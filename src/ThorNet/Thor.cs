@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ThorNet
 {
@@ -116,8 +117,8 @@ namespace ThorNet
         /// </summary>
         /// <param name="commandName">The name of the command to invoke.</param>
         /// <param name="args">The arguments to provide to the command.</param>
-        /// <returns>The exit code to return to the command prompt.</returns>
-        internal int Invoke(string commandName, string[] args)
+        /// <returns>A task that represents the asynchronous operation. The task result contains the exit code to return to the command prompt.</returns>
+        internal async Task<int> InvokeAsync(string commandName, string[] args)
         {
             // Show warnings for any public methods that don't have examples defined.
             foreach (string invalid in Commands.Where(p => string.IsNullOrEmpty(p.Value.Example))
@@ -129,7 +130,7 @@ namespace ThorNet
             ThorCommand command;
             if (Commands.TryGetValue(commandName, out command))
             {
-                try { return command.Invoke(args); }
+                try { return await command.InvokeAsync(args); }
                 catch (TargetInvocationException ex)
                 {
                     return HandleException(ex.InnerException);
@@ -145,7 +146,7 @@ namespace ThorNet
                 if (TryGetSubcommand(commandName, out subcommand))
                 {
                     commandName = PrepareInvocationArguments(ref args);
-                    return subcommand.Invoke(commandName, args);
+                    return await subcommand.InvokeAsync(commandName, args);
                 }
 
                 else
@@ -260,7 +261,7 @@ namespace ThorNet
         }
 
         /// <summary>
-        /// Prepares the input arguments to invoke <see cref="Thor.Invoke(string, string[])"/>
+        /// Prepares the input arguments to invoke <see cref="Thor.InvokeAsync(string, string[])"/>
         /// </summary>
         /// <param name="args">The array of arguments provided.  This is modified to remove the first argument if present.</param>
         /// <returns>The name of the command to invoke.  If no arguments are provided, this defaults to <see cref="Help(string, string[])"/>.</returns>
@@ -490,14 +491,14 @@ namespace ThorNet
         /// Starts the thor program.
         /// </summary>
         /// <param name="args">The arguments given from the command line.</param>
-        /// <returns>The exit code to return to the command prompt.</returns>
-        public static int Start<T>(string[] args)
+        /// <returns>A task that represents the asynchronous operation. The task result contains the exit code to return to the command prompt.</returns>
+        public static async Task<int> StartAsync<T>(string[] args)
             where T : Thor, new()
         {
             string commandName = PrepareInvocationArguments(ref args);
 
             T thor = new T();
-            return thor.Invoke(commandName, args);
+            return await thor.InvokeAsync(commandName, args);
         }
 
         /// <summary>
