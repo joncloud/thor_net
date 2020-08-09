@@ -60,10 +60,7 @@ namespace ThorNet.UnitTests
             };
             new Target(terminal).Invoke(commandName, args);
 
-            var lines = terminal.ToString()
-                .Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-
-            return lines;
+            return terminal.GetLines();
         }
 
         public class Options
