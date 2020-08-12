@@ -83,12 +83,12 @@ namespace ThorNet
                             option = null;
                             return false;
                         }
-                        option.Value = textValue;
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
+
+                        if (option.ShouldUseValue(textValue))
+                        {
+                            option.Value = textValue;
+                            return true;
+                        }
                     }
                 }
             }

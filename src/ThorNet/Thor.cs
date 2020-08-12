@@ -411,6 +411,29 @@ namespace ThorNet
 
                         Terminal.WriteLine(message.ToString());
                         message.Clear();
+
+                        // Print possible values
+                        var possibleValues = option.GetPossibleValues();
+                        if (!(possibleValues is null))
+                        {
+                            message.Append(' ', max);
+                            message.Append(" # Possible values: ");
+
+                            bool appendComma = false;
+                            foreach (var possibleValue in possibleValues)
+                            {
+                                if (appendComma)
+                                {
+                                    message.Append(", ");
+                                }
+                                message.Append(possibleValue);
+                                appendComma = true;
+                            }
+
+                            Terminal.Truncate(message);
+                            Terminal.WriteLine(message.ToString());
+                            message.Clear();
+                        }
                     }
                     Terminal.WriteLine();
                 }

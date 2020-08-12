@@ -8,8 +8,8 @@ namespace ThorNet.UnitTests
 {
     public class OptionTests
     {
-        [InlineData("Test,--class=A,--classDefault=B,--method=C,--methodDefault=D", "A,B,C,D")]
-        [InlineData("Test,-cA,-dB,-mC,-nD", "A,B,C,D")]
+        [InlineData("Test,--class=A,--classDefault=B,--method=Foo,--methodDefault=D", "A,B,Foo,D")]
+        [InlineData("Test,-cA,-dB,-mFoo,-nD", "A,B,Foo,D")]
         [Theory]
         public async Task Option_Tests(string args, string values)
         {
@@ -47,6 +47,28 @@ namespace ThorNet.UnitTests
             ).Trim();
 
             var expected = "-n, [--methodDefault=METHODDEFAULT] # method default help";
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public async Task Help_ShouldIncludePossibleValues_GivenOptionEnumType()
+        {
+            var lines = (await GetHelpAsync()).ToArray();
+
+            int i;
+            for (i = 0; i < lines.Length; i++)
+            {
+                if (lines[i].StartsWith("  -m"))
+                {
+                    break;
+                }
+            }
+
+            Assert.NotEqual(i, lines.Length - 1);
+
+            var actual = lines[i + 1];
+
+            var expected = "                        # Possible values: Foo, Bar, FooBar";
             Assert.Equal(expected, actual);
         }
 
@@ -88,7 +110,7 @@ namespace ThorNet.UnitTests
 
             public static Options OptionValues { get; set; }
             
-            [Option("method", "m", "")]
+            [Option("method", "m", "", EnumType = typeof(PossibleValues))]
             [Option("methodDefault", "-n", "method default help", DefaultValue = "MethodDefault")]
             public void Test()
             {
@@ -97,6 +119,13 @@ namespace ThorNet.UnitTests
                 OptionValues.Method = Option("method");
                 OptionValues.MethodDefault = Option("methodDefault");
             }
+        }
+
+        public enum PossibleValues
+        {
+            Foo,
+            Bar,
+            FooBar
         }
     }
 }
