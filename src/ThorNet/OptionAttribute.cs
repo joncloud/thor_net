@@ -42,5 +42,32 @@ namespace ThorNet
         /// Gets the name of the option.
         /// </summary>
         public string Name { get; }
+
+        Type _enumType;
+        /// <summary>
+        /// Gets or sets the enum type used to help describe information in help.
+        /// </summary>
+        public Type EnumType
+        {
+            get => _enumType;
+            set
+            {
+                if (!(value is null) && !value.IsEnum)
+                {
+                    throw new ArgumentException("value must be an enum type", nameof(value));
+                }
+                _enumType = value;
+            }
+        }
+
+        internal string[] GetPossibleValues()
+        {
+            if (!(EnumType is null))
+            {
+                return Enum.GetNames(EnumType);
+            }
+
+            return null;
+        }
     }
 }
